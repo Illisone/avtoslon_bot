@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бесплатный подбор авто</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo-car">🏎️</div>
+    <div class="logo-text">ASIA EXPRESS AUTO</div>
+</div>
+
+<div class="container">
+    
+    <div class="step-indicator" id="stepIndicator">
+        </div>
+    
+    <form id="carForm">
+        <div class="card form-step" data-step="1">
+            <h2>1/5. Какой автомобиль Вас интересует?</h2>
+            <div class="choice-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <button type="button" class="choice-button" data-value="Новый">🚗 Новый (из Китая)</button>
+                <button type="button" class="choice-button" data-value="С пробегом">⚙️ С пробегом</button>
+                <button type="button" class="choice-button" data-value="Неважно" style="grid-column: span 2;">🤷‍♀️ Неважно</button>
+            </div>
+            <input type="hidden" name="Тип авто" id="carType" required>
+        </div>
+
+        <div class="card form-step" data-step="2" style="display:none;">
+            <h2>2/5. Укажите марку и модель авто</h2>
+            <p class="label">Марка/Модель</p>
+            <input type="text" name="Марка/Модель" id="carModel" placeholder="Например: Toyota Camry, BYD Song Plus" required>
+        </div>
+
+        <div class="card form-step" data-step="3" style="display:none;">
+            <h2>3/5. Желаемый год выпуска</h2>
+            <p class="label">Выберите диапазон (например, 2020 — 2024)</p>
+            <input type="hidden" name="Год выпуска" id="carYear" required> 
+            
+            <div class="choice-grid" id="yearButtons">
+                </div>
+        </div>
+
+        <div class="card form-step" data-step="4" style="display:none;">
+            <h2>4/5. Как Вас зовут?</h2>
+            <p class="label">Ваше Имя</p>
+            <input type="text" name="Имя" id="clientName" placeholder="Иван" required>
+        </div>
+
+        <div class="card form-step" data-step="5" style="display:none;">
+            <h2>5/5. Ваш номер телефона</h2>
+            <p class="label">Телефон</p>
+            <input type="tel" name="Телефон" id="clientPhone" placeholder="+7 (___) ___-__-__" required>
+        </div>
+    </form>
+</div>
+
+<script>
+    // =======================================
+    // JAVASCRIPT ЛОГИКА ДЛЯ MINI APP
+    // =======================================
+    
+    const Telegram = window.Telegram.WebApp;
+    Telegram.ready();
+    Telegram.expand(); 
+    
+    const formSteps = document.querySelectorAll('.form-step');
+    const stepIndicator = document.getElementById('stepIndicator');
+    const yearButtonsContainer = document.getElementById('yearButtons');
+    let currentStep = 1;
+    const totalSteps = formSteps.length;
+    
+    // --- НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ ДИАПАЗОНА ГОДОВ ---
+    let startYear = null;
+    let endYear = null;
+
+    // --- ФУНКЦИЯ ГЕНЕРАЦИИ ГОДОВ (2015-ТЕКУЩИЙ) ---
+    function generateYearButtons() {
+        const currentYear = new Date().getFullYear();
+        // Генерируем кнопки для годов с 2015 по текущий + 1 (на будущее)
+        for (let year = currentYear + 1; year >= 2015; year--) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.classList.add('choice-button', 'year-range-button');
+            button.dataset.value = year;
+            button.textContent = year;
+            yearButtonsContainer.appendChild(button);
+        }
+    }
+    
+    // ----------------------------------------
+    // УПРАВЛЕНИЕ КНОПКОЙ НАЗАД (Telegram BackButton)
+    // ----------------------------------------
+    if (Telegram.themeParams) {
+        Telegram.MainButton.setParams({
+            color: '#E74C3C', 
+            text_color: '#FFFFFF'
+        });
+        
+        Telegram.BackButton.show();
+        Telegram.BackButton.onClick(() => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            } else {
+                Telegram.close();
+            }
+        });
+    }
+
+    // ----------------------------------------
+    // УПРАВЛЕНИЕ UI
+    // ----------------------------------------
+
+    function updateMainButton(text, isVisible, isActive) {
+        Telegram.MainButton.setParams({
+            text: text,
+            is_visible: isVisible,
+            is_active: isActive
+        });
+    }
+
+    function updateStepDots() {
+        stepIndicator.innerHTML = '';
+        for (let i = 1; i <= totalSteps; i++) {
+            const dot = document.createElement('span');
+            dot.classList.add('dot');
+            if (i === currentStep) {
+                dot.classList.add('active');
+            }
+            stepIndicator.appendChild(dot);
+        }
+    }
+    
+    // --- ФУНКЦИЯ ОЧИСТКИ И ВИЗУАЛИЗАЦИИ ВЫБРАННОГО ДИАПАЗОНА ---
+    function visualizeYearRange() {
+        const yearInput = document.getElementById('carYear');
+        const buttons = document.querySelectorAll('.year-range-button');
+        
+        // 1. Сброс всех классов
+        buttons.forEach(btn => {
+            btn.classList.remove('selected', 'in-range');
+        });
+
+        if (startYear && endYear) {
+            // Преобразуем года в числа
+            const start = Math.min(startYear, endYear);
+            const end = Math.max(startYear, endYear);
+            
+            // Заполняем поле ввода
+            yearInput.value = `${start}-${end}`;
+            
+            // 2. Визуализация
+            buttons.forEach(btn => {
+                const year = parseInt(btn.dataset.value);
+                if (year >= start && year <= end) {
+                    btn.classList.add('in-range');
+                }
+                if (year === start || year === end) {
+                    btn.classList.add('selected'); // Используем 'selected' для границ диапазона
+                    btn.classList.remove('in-range'); // У границ приоритет
+                }
+            });
+            updateMainButton(Telegram.MainButton.text, true, true);
+        } else if (startYear) {
+            // Выбран только начальный год (покажем его как selected)
+            yearInput.value = startYear;
+            document.querySelector(`.year-range-button[data-value="${startYear}"]`).classList.add('selected');
+            updateMainButton(Telegram.MainButton.text, true, false); // Ждем endYear
+        } else {
+            yearInput.value = '';
+            updateMainButton(Telegram.MainButton.text, true, false); 
+        }
+    }
+
+
+    function updateUI() {
+        // 1. Обновляем точки
+        updateStepDots();
+
+        // 2. Показываем/скрываем шаги
+        formSteps.forEach(step => {
+            const stepIndex = parseInt(step.dataset.step);
+            step.style.display = (stepIndex === currentStep) ? 'block' : 'none';
+        });
+        
+        // 3. Для Шага 3, обновляем диапазон
+        if (currentStep === 3) {
+            visualizeYearRange();
+        }
+        
+        // 4. Обновляем главную кнопку Telegram
+        const isLastStep = currentStep === totalSteps;
+        const buttonText = isLastStep ? '✅ Отправить заявку' : 'ДАЛЕЕ';
+        updateMainButton(buttonText, true, checkStepValidity());
+    }
+    
+    // ----------------------------------------
+    // ПРОВЕРКА ВАЛИДНОСТИ ТЕКУЩЕГО ШАГА
+    // ----------------------------------------
+
+    function checkStepValidity() {
+        switch (currentStep) {
+            case 1: 
+                return !!document.getElementById('carType').value;
+            case 2: 
+                return !!document.getElementById('carModel').value.trim();
+            case 3: 
+                // Валидно, если установлены startYear и endYear (или просто startYear, если пользователь хочет один год)
+                return !!startYear && !!document.getElementById('carYear').value.trim();
+            case 4: 
+                return !!document.getElementById('clientName').value.trim();
+            case 5: 
+                const phoneValue = document.getElementById('clientPhone').value.trim();
+                return phoneValue.length > 5;
+            default:
+                return false;
+        }
+    }
+    
+    // ----------------------------------------
+    // ОБРАБОТКА КНОПОК
+    // ----------------------------------------
+
+    // Шаг 1: Выбор типа авто
+    document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(btn => btn.classList.remove('selected'));
+            this.classList.add('selected');
+            document.getElementById('carType').value = this.dataset.value;
+            updateMainButton('ДАЛЕЕ', true, true);
+        });
+    });
+
+    // --- ЛОГИКА ВЫБОРА ДИАПАЗОНА ГОДОВ (ШАГ 3) ---
+    function handleYearSelection(event) {
+        const button = event.target.closest('.year-range-button');
+        if (!button) return;
+        
+        const year = parseInt(button.dataset.value);
+
+        if (startYear === null) {
+            // Выбор первого года
+            startYear = year;
+            endYear = null;
+        } else if (endYear === null) {
+            // Выбор второго года
+            endYear = year;
+        } else {
+            // Сброс и выбор нового первого года
+            startYear = year;
+            endYear = null;
+        }
+        
+        visualizeYearRange();
+    }
+    
+    yearButtonsContainer.addEventListener('click', handleYearSelection);
+
+
+    // Обработчики для полей ввода для динамической проверки
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', () => {
+            // Для шага 3 это не требуется, так как поле скрыто
+            if (currentStep !== 3) {
+                updateMainButton(Telegram.MainButton.text, true, checkStepValidity());
+            }
+        });
+    });
+    
+    // ----------------------------------------
+    // ОТПРАВКА ФОРМЫ
+    // ----------------------------------------
+
+    function submitForm() {
+        const formData = {};
+        document.querySelectorAll('input').forEach(input => {
+            if (input.name && input.value) {
+                formData[input.name] = input.value;
+            }
+        });
+        
+        try {
+            Telegram.sendData(JSON.stringify(formData));
+            Telegram.MainButton.hide();
+        } catch (error) {
+            Telegram.showAlert('Произошла ошибка при отправке данных: ' + error.message);
+        }
+    }
+
+    // Инициализация
+    generateYearButtons(); // Создаем кнопки при старте
+    updateUI(); 
+</script>
+
+</body>
+</html>
