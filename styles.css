@@ -23,7 +23,7 @@ body {
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
     
-    /* === ФОНОВОЕ ИЗОБРАЖЕНИЕ (ИСПОЛЬЗУЕМ ВАШ URL) === */
+    /* === ФОНОВОЕ ИЗОБРАЖЕНИЕ === */
     background-image: url('https://i.ibb.co/hxVmpfzm/hero-bg.webp'); 
     background-size: cover;          
     background-position: center;     
@@ -44,7 +44,7 @@ body {
     text-align: center;
     padding: 30px 0 20px;
     position: relative;
-    z-index: 1; /* Поднимаем выше фона */
+    z-index: 1; 
 }
 
 .logo-text {
@@ -71,7 +71,7 @@ body {
     margin-bottom: 30px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.6), 0 0 5px rgba(0, 0, 0, 0.4);
     position: relative;
-    z-index: 1; /* Поднимаем выше фона */
+    z-index: 1; 
 }
 
 h2 {

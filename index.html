@@ -11,7 +11,7 @@
 
 <div class="header">
     <div class="logo-car"></div>
-    <div class="logo-text">АВТОСЛОН</div>
+    <div class="logo-text">Автослон</div>
 </div>
 
 <div class="container">
@@ -23,9 +23,9 @@
         <div class="card form-step" data-step="1">
             <h2>1/6. Какой автомобиль Вас интересует?</h2>
             <div class="choice-grid" style="grid-template-columns: repeat(1, 1fr);">
-                <button type="button" class="choice-button" data-value="Новый">Только новые</button>
-                <button type="button" class="choice-button" data-value="С пробегом">С пробегом</button>
-                <button type="button" class="choice-button" data-value="Неважно">Неважно</button>
+                <button type="button" class="choice-button" data-value="Новый">🚗 Только новые</button>
+                <button type="button" class="choice-button" data-value="С пробегом">⚙️ С пробегом</button>
+                <button type="button" class="choice-button" data-value="Неважно">🤷‍♀️ Неважно</button>
             </div>
             <input type="hidden" name="Тип авто" id="carType" required>
             <div class="nav-buttons">
@@ -182,11 +182,12 @@
     }
     
     // ----------------------------------------
-    // УПРАВЛЕНИЕ КНОПКАМИ TELEGRAM (СКРЫВАЕМ)
+    // УПРАВЛЕНИЕ КНОПКАМИ TELEGRAM 
     // ----------------------------------------
     if (Telegram.themeParams) {
         Telegram.MainButton.hide(); 
         Telegram.BackButton.hide();
+        // Обработка кнопки "Назад" TWA
         Telegram.BackButton.onClick(() => {
             if (currentStep > 1) {
                 currentStep--;
@@ -217,7 +218,6 @@
                 currentStep++;
                 updateUI();
             } else {
-                // Если кнопка неактивна, но пользователь нажимает на неё
                 Telegram.showAlert('Пожалуйста, заполните или выберите нужный пункт.');
             }
         } else if (action === 'submit') {
@@ -228,10 +228,10 @@
     document.getElementById('carForm').addEventListener('click', handleNavigation);
     
     // ----------------------------------------
-    // ФУНКЦИИ ВОССТАНОВЛЕНИЯ СОСТОЯНИЯ
+    // ФУНКЦИИ ВОССТАНОВЛЕНИЯ СОСТОЯНИЯ И РЕДАКТИРОВАНИЯ
     // ----------------------------------------
 
-    // ФИКС РЕДАКТИРОВАНИЯ ГОДОВ: Восстанавливает startYear и endYear из поля #carYear
+    // Восстанавливает startYear и endYear из поля #carYear
     function loadYearRangeState() {
         const yearValue = document.getElementById('carYear').value.trim();
         startYear = null;
@@ -239,30 +239,25 @@
 
         if (yearValue) {
             if (yearValue.includes('-')) {
-                const [start, end] = yearValue.split('-').map(Number);
-                startYear = start;
-                endYear = end;
+                const parts = yearValue.split('-').map(s => parseInt(s.trim()));
+                // Проверяем, что обе части - числа и не NaN
+                if (!isNaN(parts[0]) && !isNaN(parts[1])) {
+                    startYear = parts[0];
+                    endYear = parts[1];
+                }
             } else {
-                startYear = Number(yearValue);
+                const year = parseInt(yearValue);
+                if (!isNaN(year)) {
+                    startYear = year;
+                }
             }
         }
-        // visualizeYearRange будет вызвана в updateUI
     }
 
     function createReviewField(label, value, step) {
         const div = document.createElement('div');
         div.classList.add('review-field');
         div.innerHTML = `
-            <style>
-                .review-field { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed #333; padding-bottom: 5px; }
-                .review-field-label { color: var(--hint-color); font-size: 0.9em; }
-                .review-field-value { color: var(--text-color); font-weight: 500; display: flex; align-items: center; gap: 8px; }
-                .review-field-edit { 
-                    background: none; border: none; color: var(--accent-light); 
-                    font-size: 1.2em; cursor: pointer; padding: 0; margin: 0; 
-                    transform: translateY(2px); 
-                }
-            </style>
             <span class="review-field-label">${label}</span>
             <span class="review-field-value">
                 ${value}
@@ -306,6 +301,7 @@
         }
     }
     
+    // ФУНКЦИЯ РЕДАКТИРОВАНИЯ ШАГА (исправлена)
     window.editStep = function(step) {
         currentStep = step;
         updateUI();
@@ -320,7 +316,7 @@
         for (let i = 1; i <= totalSteps - 1; i++) { 
             const dot = document.createElement('span');
             dot.classList.add('dot');
-            if (i === currentStep) {
+            if (i <= currentStep) {
                 dot.classList.add('active');
             }
             stepIndicator.appendChild(dot);
@@ -351,7 +347,7 @@
                     }
                 }
                 
-                // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ
+                // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ ДЛЯ ТЕКУЩЕГО ШАГА
                 if (stepIndex === 1) {
                     const carType = document.getElementById('carType').value;
                     document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(btn => {
@@ -363,12 +359,10 @@
                 }
                 
                 if (stepIndex === 2) {
-                    // Обязательно скрываем подсказку при показе шага, если нет ввода
                     updateAutocomplete();
                 }
                 
                 if (stepIndex === 3) {
-                    // ВОССТАНОВЛЕНИЕ ГОДОВ
                     loadYearRangeState();
                     visualizeYearRange();
                 }
@@ -380,9 +374,14 @@
         }
         
         const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+        // Ищем первое видимое поле ввода
         const firstInput = currentStepElement ? currentStepElement.querySelector('input:not([type="hidden"])') : null;
+
         if (firstInput) {
-            firstInput.focus();
+            // Добавляем { preventScroll: true } для предотвращения "прыжка" экрана
+            setTimeout(() => {
+                firstInput.focus({ preventScroll: true }); 
+            }, 10); 
         }
     }
     
@@ -434,15 +433,13 @@
                     btn.classList.remove('in-range'); 
                 }
             });
-            // Не вызываем updateUI(), так как визуализация уже завершена
         } else if (startYear) {
             yearInput.value = startYear;
             document.querySelector(`.year-range-button[data-value="${startYear}"]`)?.classList.add('selected');
-            // Не вызываем updateUI()
         } else {
             yearInput.value = '';
-            // Не вызываем updateUI()
         }
+        
         // Обновляем состояние кнопки "ДАЛЕЕ" вручную после визуализации
         const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
         const nextButton = currentStepElement ? currentStepElement.querySelector('.nav-button.next') : null;
@@ -456,7 +453,7 @@
     }
     
     // ----------------------------------------
-    // ОБРАБОТКА ВЫБОРА (для Шагов 1 и 3)
+    // ОБРАБОТКА ВЫБОРА И ПОЛЕЙ ВВОДА
     // ----------------------------------------
 
     // Шаг 1: Выбор типа авто
@@ -514,6 +511,19 @@
         updateAutocomplete();
         updateUI(); 
     });
+    
+    // Обработчики для корректной работы автоподсказки на мобильных
+    carModelInput.addEventListener('blur', () => {
+        // Небольшая задержка, чтобы клик по подсказке успел сработать
+        setTimeout(() => {
+            autocompleteResults.style.display = 'none';
+        }, 150);
+    });
+
+    carModelInput.addEventListener('focus', () => {
+        updateAutocomplete(); // Показываем список при фокусе, если есть текст
+    });
+
     
     // ----------------------------------------
     // ОТПРАВКА ФОРМЫ
