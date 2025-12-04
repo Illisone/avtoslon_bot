@@ -22,10 +22,10 @@
     <form id="carForm">
         <div class="card form-step" data-step="1">
             <h2>1/5. Какой автомобиль Вас интересует?</h2>
-            <div class="choice-grid" style="grid-template-columns: repeat(2, 1fr);">
-                <button type="button" class="choice-button" data-value="Новый">Новый (из Китая)</button>
-                <button type="button" class="choice-button" data-value="С пробегом">С пробегом</button>
-                <button type="button" class="choice-button" data-value="Неважно" style="grid-column: span 2;">Неважно</button>
+            <div class="choice-grid" style="grid-template-columns: repeat(1, 1fr);">
+                <button type="button" class="choice-button" data-value="Новый">🚗 Только новые</button>
+                <button type="button" class="choice-button" data-value="С пробегом">⚙️ С пробегом</button>
+                <button type="button" class="choice-button" data-value="Неважно">🤷‍♀️ Неважно</button>
             </div>
             <input type="hidden" name="Тип авто" id="carType" required>
         </div>
@@ -54,8 +54,20 @@
         <div class="card form-step" data-step="5" style="display:none;">
             <h2>5/5. Ваш номер телефона</h2>
             <p class="label">Телефон</p>
-            <input type="tel" name="Телефон" id="clientPhone" placeholder="+7 (___) ___-__-__" required>
+            <input type="tel" name="Телефон" id="clientPhone" placeholder="+7 9ХХ ХХХ-ХХ-ХХ" required>
         </div>
+        
+        <div class="card form-step" data-step="6" style="display:none;">
+            <h2>Проверьте данные</h2>
+            <div id="reviewData">
+                </div>
+            
+            <div class="nav-buttons">
+                <button type="button" class="nav-button back" onclick="handleCustomBackButton()">НАЗАД</button>
+                <button type="button" class="nav-button next" id="finalSubmitButton">ОТПРАВИТЬ</button>
+            </div>
+        </div>
+        
     </form>
 </div>
 
@@ -71,17 +83,19 @@
     const formSteps = document.querySelectorAll('.form-step');
     const stepIndicator = document.getElementById('stepIndicator');
     const yearButtonsContainer = document.getElementById('yearButtons');
-    let currentStep = 1;
-    const totalSteps = formSteps.length;
+    const reviewDataContainer = document.getElementById('reviewData');
+    const finalSubmitButton = document.getElementById('finalSubmitButton');
     
-    // --- ПЕРЕМЕННЫЕ ДЛЯ ДИАПАЗОНА ГОДОВ ---
+    // ⚠️ Увеличиваем общее количество шагов, так как добавили Шаг 6 (Проверка)
+    const totalSteps = formSteps.length; 
+    let currentStep = 1;
+
     let startYear = null;
     let endYear = null;
 
     // --- ФУНКЦИЯ ГЕНЕРАЦИИ ГОДОВ ---
     function generateYearButtons() {
         const currentYear = new Date().getFullYear();
-        // Генерируем кнопки для годов с 2015 по текущий + 1
         for (let year = currentYear + 1; year >= 2015; year--) {
             const button = document.createElement('button');
             button.type = 'button';
@@ -97,36 +111,41 @@
     // ----------------------------------------
     if (Telegram.themeParams) {
         Telegram.MainButton.setParams({
-            color: '#E74C3C', 
+            color: '#00448a', 
             text_color: '#FFFFFF'
         });
         
         Telegram.BackButton.show();
-        Telegram.BackButton.onClick(() => {
-            if (currentStep > 1) {
-                currentStep--;
-                updateUI();
-            } else {
-                Telegram.close();
-            }
-        });
+        Telegram.BackButton.onClick(handleCustomBackButton);
     }
-
+    
+    // Общий обработчик для кнопки "Назад"
+    function handleCustomBackButton() {
+        if (currentStep > 1) {
+            currentStep--;
+            updateUI();
+        } else {
+            Telegram.close();
+        }
+    }
+    
     // ----------------------------------------
     // УПРАВЛЕНИЕ UI
     // ----------------------------------------
 
-    function updateMainButton(text, isVisible, isActive) {
+    function updateMainButton(text, isVisible, isActive, color = '#00448a') {
         Telegram.MainButton.setParams({
             text: text,
             is_visible: isVisible,
-            is_active: isActive
+            is_active: isActive,
+            color: color
         });
     }
 
     function updateStepDots() {
         stepIndicator.innerHTML = '';
-        for (let i = 1; i <= totalSteps; i++) {
+        // Dots only for the first 5 input steps
+        for (let i = 1; i <= totalSteps - 1; i++) { 
             const dot = document.createElement('span');
             dot.classList.add('dot');
             if (i === currentStep) {
@@ -136,12 +155,161 @@
         }
     }
     
+    // Функция для создания поля для проверки данных
+    function createReviewField(label, value, step) {
+        const div = document.createElement('div');
+        div.classList.add('review-field');
+        // Очень простой стиль для соответствия скринам
+        div.innerHTML = `
+            <style>
+                .review-field { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed #333; padding-bottom: 5px; }
+                .review-field-label { color: var(--hint-color); font-size: 0.9em; }
+                .review-field-value { color: var(--text-color); font-weight: 500; display: flex; align-items: center; gap: 8px; }
+                .review-field-edit { 
+                    background: none; border: none; color: var(--accent-light); 
+                    font-size: 1.2em; cursor: pointer; padding: 0; margin: 0; 
+                    transform: translateY(2px); 
+                }
+            </style>
+            <span class="review-field-label">${label}</span>
+            <span class="review-field-value">
+                ${value}
+                <button class="review-field-edit" data-step="${step}" onclick="editStep(${step})">✏️</button>
+            </span>
+        `;
+        return div;
+    }
+    
+    // Шаг 6: Заполнение данных для проверки
+    function populateReviewData() {
+        reviewDataContainer.innerHTML = '';
+        const formData = {};
+        document.querySelectorAll('input').forEach(input => {
+            if (input.name && input.value) {
+                formData[input.name] = input.value;
+            }
+        });
+
+        let stepIndex = 1;
+        for (const key in formData) {
+            // Маппинг заголовков на шаги
+            const labelMap = {
+                'Тип авто': 'Тип', 
+                'Марка/Модель': 'Марка и модель', 
+                'Год выпуска': 'Год выпуска', 
+                'Имя': 'Имя', 
+                'Телефон': 'Телефон'
+            };
+            // Игнорируем Город доставки, если не добавлено поле в HTML (см. скриншот 83013c)
+            
+            const label = labelMap[key] || key;
+            const value = formData[key];
+            
+            // Ручной маппинг шагов к полям (должен совпадать с HTML-структурой)
+            let stepForEdit = 0;
+            if (key === 'Тип авто') stepForEdit = 1;
+            else if (key === 'Марка/Модель') stepForEdit = 2;
+            else if (key === 'Год выпуска') stepForEdit = 3;
+            else if (key === 'Имя') stepForEdit = 4;
+            else if (key === 'Телефон') stepForEdit = 5;
+
+            if (stepForEdit > 0) {
+                 reviewDataContainer.appendChild(createReviewField(label, value, stepForEdit));
+            }
+        }
+        
+        // Обновляем визуальную кнопку
+        if (finalSubmitButton) {
+            finalSubmitButton.classList.add('active');
+            finalSubmitButton.addEventListener('click', submitForm);
+        }
+        
+        // Скрываем MainButton, так как используем HTML-кнопку
+        updateMainButton('ОТПРАВИТЬ', false, true, '#E74C3C');
+    }
+    
+    // Функция для перехода на шаг редактирования
+    window.editStep = function(step) {
+        currentStep = step;
+        updateUI();
+    }
+
+
+    function updateUI() {
+        // 1. Обновляем точки (только для первых 5 шагов)
+        updateStepDots();
+
+        // 2. Показываем/скрываем шаги
+        formSteps.forEach(step => {
+            const stepIndex = parseInt(step.dataset.step);
+            step.style.display = (stepIndex === currentStep) ? 'block' : 'none';
+        });
+        
+        // 3. Для Шага 3, обновляем диапазон
+        if (currentStep === 3) {
+            visualizeYearRange();
+        }
+        
+        // 4. Для Шага 6, заполняем данные для проверки
+        if (currentStep === totalSteps) { // totalSteps = 6
+            populateReviewData();
+            // На этом шаге Telegram MainButton скрыта (см. populateReviewData)
+            Telegram.BackButton.show();
+            return;
+        } else {
+            // Показываем Telegram MainButton для остальных шагов
+            Telegram.MainButton.show();
+        }
+        
+        // 5. Обновляем главную кнопку Telegram
+        const isLastInputStep = currentStep === totalSteps - 1; // Шаг 5
+        const buttonText = isLastInputStep ? 'ПРОВЕРИТЬ ДАННЫЕ' : 'ДАЛЕЕ';
+        
+        updateMainButton(buttonText, true, checkStepValidity(), '#00448a');
+        
+        // Скрываем визуальную кнопку отправки
+        if (finalSubmitButton) {
+            finalSubmitButton.classList.remove('active');
+        }
+        
+        // Фокусируемся на полях ввода
+        const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+        const firstInput = currentStepElement ? currentStepElement.querySelector('input:not([type="hidden"])') : null;
+        if (firstInput) {
+            firstInput.focus();
+        }
+    }
+    
+    // ... (checkStepValidity и другие обработчики остаются прежними) ...
+    // ----------------------------------------
+    // ПРОВЕРКА ВАЛИДНОСТИ ТЕКУЩЕГО ШАГА
+    // ----------------------------------------
+
+    function checkStepValidity() {
+        switch (currentStep) {
+            case 1: 
+                return !!document.getElementById('carType').value;
+            case 2: 
+                return !!document.getElementById('carModel').value.trim();
+            case 3: 
+                return !!document.getElementById('carYear').value.trim();
+            case 4: 
+                return !!document.getElementById('clientName').value.trim();
+            case 5: 
+                const phoneValue = document.getElementById('clientPhone').value.trim();
+                return phoneValue.length > 5;
+            case 6: // Шаг проверки всегда "валиден" для навигации
+                return true; 
+            default:
+                return false;
+        }
+    }
+    
     // --- ФУНКЦИЯ ОЧИСТКИ И ВИЗУАЛИЗАЦИИ ВЫБРАННОГО ДИАПАЗОНА ---
     function visualizeYearRange() {
         const yearInput = document.getElementById('carYear');
         const buttons = document.querySelectorAll('.year-range-button');
         
-        // 1. Сброс всех классов
         buttons.forEach(btn => {
             btn.classList.remove('selected', 'in-range');
         });
@@ -149,11 +317,8 @@
         if (startYear && endYear) {
             const start = Math.min(startYear, endYear);
             const end = Math.max(startYear, endYear);
-            
-            // Заполняем поле ввода
             yearInput.value = `${start}-${end}`;
             
-            // 2. Визуализация
             buttons.forEach(btn => {
                 const year = parseInt(btn.dataset.value);
                 if (year >= start && year <= end) {
@@ -174,67 +339,20 @@
             updateMainButton(Telegram.MainButton.text, true, false); 
         }
     }
-
-
-    function updateUI() {
-        // 1. Обновляем точки
-        updateStepDots();
-
-        // 2. Показываем/скрываем шаги
-        formSteps.forEach(step => {
-            const stepIndex = parseInt(step.dataset.step);
-            step.style.display = (stepIndex === currentStep) ? 'block' : 'none';
-        });
-        
-        // 3. Для Шага 3, обновляем диапазон
-        if (currentStep === 3) {
-            visualizeYearRange();
-        }
-        
-        // 4. Обновляем главную кнопку Telegram
-        const isLastStep = currentStep === totalSteps;
-        const buttonText = isLastStep ? '✅ Отправить заявку' : 'ДАЛЕЕ';
-        updateMainButton(buttonText, true, checkStepValidity());
-    }
     
     // ----------------------------------------
-    // ПРОВЕРКА ВАЛИДНОСТИ ТЕКУЩЕГО ШАГА
+    // ОБРАБОТКА КНОПОК И ПОЛЕЙ
     // ----------------------------------------
 
-    function checkStepValidity() {
-        switch (currentStep) {
-            case 1: 
-                return !!document.getElementById('carType').value;
-            case 2: 
-                return !!document.getElementById('carModel').value.trim();
-            case 3: 
-                // Валидно, если поле carYear заполнено (т.е. был выбран хотя бы один год)
-                return !!document.getElementById('carYear').value.trim();
-            case 4: 
-                return !!document.getElementById('clientName').value.trim();
-            case 5: 
-                const phoneValue = document.getElementById('clientPhone').value.trim();
-                return phoneValue.length > 5;
-            default:
-                return false;
-        }
-    }
-    
-    // ----------------------------------------
-    // ОБРАБОТКА КНОПОК
-    // ----------------------------------------
-
-    // Шаг 1: Выбор типа авто - ИСПРАВЛЕНА ЛОГИКА АКТИВАЦИИ КНОПКИ
+    // Шаг 1: Выбор типа авто
     document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(button => {
         button.addEventListener('click', function() {
-            // 1. Устанавливаем выбранное значение
             document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(btn => btn.classList.remove('selected'));
             this.classList.add('selected');
             document.getElementById('carType').value = this.dataset.value;
             
-            // 2. Явно перепроверяем и активируем кнопку "ДАЛЕЕ"
-            const buttonText = currentStep === totalSteps ? '✅ Отправить заявку' : 'ДАЛЕЕ';
-            updateMainButton(buttonText, true, checkStepValidity());
+            const buttonText = currentStep === totalSteps - 1 ? 'ПРОВЕРИТЬ ДАННЫЕ' : 'ДАЛЕЕ';
+            updateMainButton(buttonText, true, checkStepValidity(), '#00448a');
         });
     });
 
@@ -265,7 +383,7 @@
     document.querySelectorAll('input').forEach(input => {
         input.addEventListener('input', () => {
             if (currentStep !== 3) {
-                updateMainButton(Telegram.MainButton.text, true, checkStepValidity());
+                updateMainButton(Telegram.MainButton.text, true, checkStepValidity(), '#00448a');
             }
         });
     });
@@ -280,18 +398,12 @@
             return;
         }
         
-        if (currentStep < totalSteps) {
+        // На последнем входном шаге (Шаг 5) переходим к Шагу 6 (Проверка)
+        if (currentStep < totalSteps) { 
             currentStep++;
             updateUI();
-            
-            const nextStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-            const firstInput = nextStepElement ? nextStepElement.querySelector('input') : null;
-            if (firstInput) {
-                firstInput.focus();
-            }
-        } else {
-            submitForm();
-        }
+        } 
+        // Если бы Шага 6 не было, здесь был бы submitForm()
     });
     
     // ----------------------------------------
@@ -299,6 +411,10 @@
     // ----------------------------------------
 
     function submitForm() {
+        // Убедимся, что отправка не дублируется
+        if (!checkStepValidity()) return; 
+        
+        // Собираем данные
         const formData = {};
         document.querySelectorAll('input').forEach(input => {
             if (input.name && input.value) {
@@ -306,9 +422,21 @@
             }
         });
         
+        // Форматируем для отправки в бот
+        let submissionData = "✅ НОВАЯ ЗАЯВКА НА ПОДБОР АВТО:\n\n";
+        for (const key in formData) {
+            submissionData += `*${key}*: ${formData[key]}\n`;
+        }
+        
         try {
             Telegram.sendData(JSON.stringify(formData));
             Telegram.MainButton.hide();
+            // Для визуальной кнопки
+            if(finalSubmitButton) finalSubmitButton.textContent = 'ОТПРАВЛЕНО';
+            
+            // Заменяем сообщение на Шаге 6
+            reviewDataContainer.innerHTML = '<h3>Заявка успешно отправлена!</h3><p>Спасибо за ваш выбор. Скоро с вами свяжется менеджер.</p>';
+            
         } catch (error) {
             Telegram.showAlert('Произошла ошибка при отправке данных: ' + error.message);
         }
