@@ -6,7 +6,7 @@
     --card-bg: #f5f5f5;       /* Фон для карточек и контейнеров */
     --accent-color: #00448a;  /* Главный акцентный цвет (ярко-красный) */
     --text-color: #EAEAEA;    /* Цвет основного текста (светлый) */
-    --hint-color: #AAAAAA;    /* Цвет вспомогательного текста и подсказок */
+    --hint-color: #666565;    /* Цвет вспомогательного текста и подсказок */
     --input-bg: #333333;      /* Фон полей ввода и неактивных кнопок */
 }
 
@@ -90,8 +90,8 @@ input[type="text"], input[type="tel"], input[type="number"] {
     border: 1px solid #444; /* Граница поля */
     border-radius: 10px;
     font-size: 1.1em;
-    background-color: var(--input-bg); 
-    color: var(--text-color);
+    background-color: #f5f5f5; 
+    color: #333;
     outline: none;
     transition: border-color 0.2s;
     /* Убираем стандартные стрелки у числовых полей в Chrome/Safari/Firefox */
@@ -123,7 +123,7 @@ input:focus {
 .choice-button {
     padding: 12px 10px;
     border: 2px solid #444;
-    border-radius: 10px;
+    border-radius: 60px;
     background: linear-gradient(90deg, #00448a 0%, #0063c7 100%);
     color: var(--text-color);
     font-size: 1em;
@@ -135,11 +135,11 @@ input:focus {
 /* Стиль ВЫБРАННОЙ (активной, это границы диапазона) кнопки */
 .choice-button.selected {
     /* Градиент, как на вашем примере */
-    background: linear-gradient(145deg, #FF6F61, #E74C3C); 
-    color: #fff;
-    border-color: #FF6F61;
+    background: #f5f5f5; 
+    color: #00448a;
+    border-color: #00448a;
     /* Легкая тень для выделения */
-    box-shadow: 0 0 10px rgba(231, 76, 60, 0.6);
+    box-shadow: 0 0 10px #0063c7;
 }
 
 /* НОВЫЙ СТИЛЬ: для кнопок, входящих в выделенный диапазон (между границами) */
