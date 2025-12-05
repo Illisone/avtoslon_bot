@@ -11,6 +11,9 @@
 </head>
 
 <body>
+    <div id="preloader">
+    <div class="loader"></div>
+</div>
 
     <div class="header">
         <div class="logo-car"></div>
@@ -667,6 +670,18 @@
         generateYearButtons();
         setupPhoneInput(document.getElementById('clientPhone')); // <-- Инициализация маски +7
         updateUI(); 
+        window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        // Добавляем класс, который плавно скрывает элемент
+        preloader.classList.add('hidden');
+        
+        // Удаляем элемент из DOM через 500мс, чтобы освободить память
+        setTimeout(() => {
+            preloader.remove();
+        }, 500); 
+    }
+});
     </script>
 
 </body>

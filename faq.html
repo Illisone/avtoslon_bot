@@ -9,6 +9,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+    <div id="preloader">
+    <div class="loader"></div>
+</div>
     <div class="container">
         
         <header class="header">
@@ -106,6 +109,18 @@
         // Переключаем активный класс для текущего элемента
         item.classList.toggle('active');
     });
+    window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        // Добавляем класс, который плавно скрывает элемент
+        preloader.classList.add('hidden');
+        
+        // Удаляем элемент из DOM через 500мс, чтобы освободить память
+        setTimeout(() => {
+            preloader.remove();
+        }, 500); 
+    }
+});
 </script>
 
 </body>
