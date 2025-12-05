@@ -60,11 +60,9 @@ body {
 /* 4. КАРТОЧКИ И ЗАГОЛОВКИ ШАГОВ (Glassmorphism) */
 /* ======================================= */
 .card {
-    /* --- КРИТИЧЕСКИЕ ИЗМЕНЕНИЯ ДЛЯ ЭФФЕКТА СТЕКЛА --- */
-    background-color: var(--card-bg-blur); /* Полупрозрачный фон */
-    backdrop-filter: blur(10px);          /* Размытие фона за карточкой */
-    -webkit-backdrop-filter: blur(10px);  /* Поддержка Safari */
-    /* ------------------------------------------------ */
+    background-color: var(--card-bg-blur); 
+    backdrop-filter: blur(10px);          
+    -webkit-backdrop-filter: blur(10px);  
 
     border-radius: 25px; 
     padding: 20px;
@@ -72,7 +70,7 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.6), 0 0 5px rgba(0, 0, 0, 0.4);
     position: relative;
     z-index: 1; 
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Легкая белая рамка */
+    border: 1px solid rgba(255, 255, 255, 0.1); 
 }
 
 h2 {
@@ -211,9 +209,11 @@ input:focus {
     text-align: center;
     transition: opacity 0.2s, transform 0.1s, box-shadow 0.2s;
     border: none;
-    background-color: var(--input-bg);
+    
+    /* === ИЗМЕНЕНИЯ ДЛЯ НЕАКТИВНЫХ КНОПОК (лучше видно на стекле) === */
+    background-color: #383838; /* Чуть светлее, чем input-bg */
     color: var(--hint-color);
-    opacity: 0.6;
+    opacity: 0.8; /* Увеличение непрозрачности с 0.6 до 0.8 */
 }
 
 .nav-button.back {
@@ -311,7 +311,6 @@ body::before {
     width: 100%;
     height: 100%;
     
-    /* === ССЫЛКА НА КАРТИНКУ === */
     background-image: url('https://i.ibb.co/sd0MFSTH/1-Nero-AI-Image-Upscaler-Photo-Face.png'); 
     background-size: cover;          
     background-position: center;     
