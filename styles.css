@@ -23,9 +23,17 @@ body {
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
     position: relative; 
-    min-height: 100%;
-    scrollbar-width: none; /* Убираем скроллбар */
+    min-height: 100%; /* Правильно: не используем vh здесь */
+    
+    /* Скрытие скроллбара */
+    scrollbar-width: none; 
     -ms-overflow-style: none;
+}
+
+/* Добавляем скрытие для WebKit, если не сделали ранее */
+body::-webkit-scrollbar {
+    display: none; 
+    width: 0;
 }
 
 .container {
@@ -353,7 +361,7 @@ textarea:focus {
 }
 
 /* ======================================= */
-/* 11. НАЛОЖЕНИЕ НА ФОН (ДЛЯ ЧИТАБЕЛЬНОСТИ) */
+/* 11. НАЛОЖЕНИЕ НА ФОН (ФИКСИРОВАННЫЙ БЕЗ СКАЧКОВ) */
 /* ======================================= */
 body::before {
     content: '';
@@ -361,22 +369,14 @@ body::before {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    
-    background-image: url('https://i.ibb.co/sd0MFSTH/1-Nero-AI-Image-Upscaler-Photo-Face.png'); 
-    background-size: cover;          
-    background-position: center;     
-    background-repeat: no-repeat;
-    
-    background-blend-mode: multiply; 
-    background-color: rgba(0, 0, 0, 0.7); 
-    
+    height: 100vh; 
+    min-height: -webkit-fill-available; 
     background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%), 
                 url('./background.png');
-    background-size: cover;          
-    background-position: center;  
-    
-    z-index: -1; 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
 }
 /* ======================================= */
 /* 12. СТИЛИ ДЛЯ FAQ-АККОРДЕОНА (КАРТОЧКИ) */
@@ -548,9 +548,3 @@ body::before {
 /* 15. СКРЫТИЕ ПОЛОСЫ ПРОКРУТКИ */
 /* ======================================= */
 
-/* Для браузеров WebKit (Chrome, Safari, Telegram App) */
-body::-webkit-scrollbar {
-    display: none; /* Полностью скрываем скроллбар */
-    width: 0;      /* Дополнительно убираем ширину */
-    height: 0;
-}
