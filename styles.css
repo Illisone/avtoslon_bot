@@ -23,12 +23,9 @@ body {
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
     
-    /* === ФОНОВОЕ ИЗОБРАЖЕНИЕ (ИСПОЛЬЗУЕМ ВАШ URL) === */
-    background-image: url('https://i.ibb.co/hxVmpfzm/hero-bg.webp'); 
-    background-size: cover;          /* Гарантирует, что изображение покроет весь экран */
-    background-position: center;     /* Центрирует изображение */
-    background-attachment: fixed;    /* Фиксирует изображение, чтобы оно не скроллилось */
-    background-repeat: no-repeat;
+    /* === КРИТИЧЕСКИЕ ИЗМЕНЕНИЯ ДЛЯ СТАБИЛЬНОСТИ ФОНА === */
+    position: relative; 
+    min-height: 100vh;
 }
 
 .container {
@@ -304,12 +301,28 @@ input:focus {
 /* ======================================= */
 body::before {
     content: '';
-    position: fixed;
+    /* Используем fixed для устранения "пляски" на мобильных/TWA */
+    position: fixed; 
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    /* Черный градиент, который покрывает картинку, делая ее темнее */
-    background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
-    z-index: -1; /* Помещаем под контент */
+    
+    /* Сначала изображение */
+    background-image: url('https://i.ibb.co/hxVmpfzm/hero-bg.webp'); 
+    background-size: cover;          
+    background-position: center;     
+    background-repeat: no-repeat;
+    
+    /* Затем градиент-оверлей поверх изображения */
+    background-blend-mode: multiply; /* Смешивает изображение и градиент */
+    background-color: rgba(0, 0, 0, 0.7); /* Добавляет базовую темноту */
+    
+    /* Добавляем градиент для смягчения центра */
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%), 
+                url('https://i.ibb.co/hxVmpfzm/hero-bg.webp');
+    background-size: cover;          
+    background-position: center;  
+    
+    z-index: -1; 
 }

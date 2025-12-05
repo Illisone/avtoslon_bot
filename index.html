@@ -11,7 +11,7 @@
 
 <div class="header">
     <div class="logo-car"></div>
-    <div class="logo-text">АВТОСЛОН</div>
+    <div class="logo-text">Автослон</div>
 </div>
 
 <div class="container">
@@ -117,11 +117,33 @@
 
     // --- ЛОГИКА АВТОПОДСКАЗКИ (ШАГ 2) ---
     
+    // ====================================================
+    // РАСШИРЕННЫЙ СПИСОК МАРОК
+    // ====================================================
     const CAR_BRANDS = [
-        "Toyota", "Lexus", "Mercedes-Benz", "BMW", "Audi", "Hyundai", 
-        "Kia", "Chevrolet", "Ford", "Honda", "Nissan", "Mazda", 
-        "Volkswagen", "Geely", "Chery", "BYD", "Haval", "Exeed", 
-        "LADA", "Porsche", "Land Rover", "Volvo"
+        // Премиум и Европа
+        "Mercedes-Benz", "Мерседес-Бенц", "Мерседес", "BMW", "БМВ", "Audi", "Ауди", 
+        "Lexus", "Лексус", "Porsche", "Порше", "Land Rover", "Ленд Ровер", "Volvo", "Вольво", 
+        "Genesis", "Генезис", "Tesla", "Тесла", "Cadillac", "Кадиллак",
+        
+        // Япония и Корея
+        "Toyota", "Тойота", "Hyundai", "Хендай", "Хюндай", "Kia", "Киа", "Nissan", "Ниссан", 
+        "Mazda", "Мазда", "Honda", "Хонда", "Subaru", "Субару", "Mitsubishi", "Митсубиши", 
+        "Suzuki", "Сузуки", "Infiniti", "Инфинити", "SsangYong", "Санг Йонг",
+        
+        // Китай
+        "Geely", "Джили", "Chery", "Чери", "BYD", "БИД", "Haval", "Хавейл", "Exeed", "Эксид", 
+        "Changan", "Чанган", "Great Wall", "Грейт Волл", "Tank", "Танк", "Jetour", "Джетур", 
+        "FAW", "ФАВ", "Hongqi", "Хончи", "Li Auto", "Ли Авто", "Livan", "Ливан", "OMODA", "Омода",
+        "Voyah", "Воя", "Zeekr", "Зикр", "GAC", "ГАК", "JAC", "ДЖАК",
+        
+        // США и Остальная Европа
+        "Volkswagen", "Фольксваген", "VW", "Ford", "Форд", "Chevrolet", "Шевроле", "Skoda", "Шкода", 
+        "Renault", "Рено", "Peugeot", "Пежо", "Citroen", "Ситроен", "Opel", "Опель", 
+        "Jeep", "Джип", "Dodge", "Додж", "Fiat", "Фиат",
+        
+        // Россия
+        "LADA", "Лада", "УАЗ", "UAZ", "ГАЗ", "GAZ", "Москвич"
     ];
 
     const carModelInput = document.getElementById('carModel');
@@ -138,6 +160,7 @@
         }
 
         const filteredBrands = CAR_BRANDS.filter(brand => 
+            // Ищем совпадение по началу слова
             brand.toLowerCase().startsWith(inputVal)
         ).slice(0, 5); 
 
@@ -150,11 +173,24 @@
             const item = document.createElement('div');
             item.classList.add('autocomplete-item');
             
-            const boldPart = brand.substring(0, inputVal.length);
-            const restPart = brand.substring(inputVal.length);
+            const brandLower = brand.toLowerCase();
+            const inputValLength = inputVal.length;
+            let boldPart = brand;
+            let restPart = '';
+            
+            // Находим индекс, где начинается совпадение
+            const matchIndex = brandLower.indexOf(inputVal);
+
+            if (matchIndex === 0) {
+                 // Если совпадение в начале
+                boldPart = brand.substring(0, inputValLength);
+                restPart = brand.substring(inputValLength);
+            }
+            
             item.innerHTML = `<strong>${boldPart}</strong>${restPart}`;
             
             item.addEventListener('click', () => {
+                // Вставляем полное, оригинальное название марки
                 carModelInput.value = brand + ' ';
                 autocompleteResults.innerHTML = ''; 
                 autocompleteResults.style.display = 'none';
@@ -179,6 +215,53 @@
             button.textContent = year;
             yearButtonsContainer.appendChild(button);
         }
+    }
+
+    // ----------------------------------------
+    // ФУНКЦИЯ МАСКИ ТЕЛЕФОНА (+7)
+    // ----------------------------------------
+    function setupPhoneInput(input) {
+        // Устанавливаем +7, если поле пусто, и предотвращаем его удаление
+        input.addEventListener('focus', function() {
+            if (this.value === '' || this.value === '+') {
+                this.value = '+7';
+            }
+            // Перемещаем курсор в конец
+            this.setSelectionRange(this.value.length, this.value.length);
+        });
+        
+        input.addEventListener('input', function() {
+            let value = this.value.replace(/[^\d+]/g, ''); // Удаляем все, кроме цифр и +
+            
+            // Если удалили +7, ставим его обратно
+            if (!value.startsWith('+7')) {
+                // Если пользователь набрал 8 или просто цифру 7, исправляем на +7
+                if (value.startsWith('8')) {
+                    value = '+7' + value.substring(1);
+                } else if (value.startsWith('7')) {
+                    value = '+' + value;
+                } else if (!value.startsWith('+')) {
+                    // Если начал вводить с цифры, добавляем +7
+                    value = '+7' + value;
+                }
+            }
+            
+            // Защита от удаления +7
+            if (value.length < 2 && value !== '+') { 
+                 value = '+7';
+            } else if (value.length > 2 && !value.startsWith('+7')) {
+                // Если ввели что-то, кроме +7 в начале
+                 value = '+7' + value.replace(/\+/g, '').substring(1);
+            }
+            
+            // Ограничиваем длину (максимум 12 цифр, включая 7, и один плюс = 12 символов)
+            if (value.length > 12) {
+                value = value.substring(0, 12);
+            }
+            
+            this.value = value;
+            updateUI();
+        });
     }
     
     // ----------------------------------------
@@ -358,25 +441,15 @@
                     });
                 }
                 
-                if (stepIndex === 2) {
-                    // Явное восстановление значения для надежности (Исправление сброса)
-                    document.getElementById('carModel').value = document.getElementById('carModel').value;
-                    updateAutocomplete();
-                }
-                
                 if (stepIndex === 3) {
+                    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Восстанавливаем состояние перед визуализацией
                     loadYearRangeState();
                     visualizeYearRange();
                 }
                 
-                if (stepIndex === 4) {
-                    // Явное восстановление значения для надежности (Исправление сброса)
-                    document.getElementById('clientName').value = document.getElementById('clientName').value;
-                }
-                
                 if (stepIndex === 5) {
-                    // Явное восстановление значения для надежности (Исправление сброса)
-                    document.getElementById('clientPhone').value = document.getElementById('clientPhone').value;
+                    // Повторное применение маски при возврате на шаг 5 (для фокусировки)
+                    setupPhoneInput(document.getElementById('clientPhone'));
                 }
             }
         });
@@ -413,7 +486,7 @@
                 return !!document.getElementById('clientName').value.trim();
             case 5: 
                 const phoneValue = document.getElementById('clientPhone').value.trim();
-                return phoneValue.length > 5;
+                return phoneValue.length === 12; // Проверяем на полную длину +7 (12 символов)
             case 6: 
                 return true; 
             default:
@@ -509,7 +582,7 @@
 
 
     // Обработчики для полей ввода для динамической проверки
-    document.querySelectorAll('input').forEach(input => {
+    document.querySelectorAll('input:not([type="hidden"])').forEach(input => {
         input.addEventListener('input', () => {
             // Обновляем UI для активации кнопки "ДАЛЕЕ"
             if (currentStep !== 3) {
@@ -567,6 +640,7 @@
 
     // Инициализация
     generateYearButtons(); 
+    setupPhoneInput(document.getElementById('clientPhone')); // <-- Инициализация маски +7
     updateUI(); 
 </script>
 
