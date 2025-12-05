@@ -82,20 +82,12 @@
 </div>
 
 <script>
-    // --- ФИКСАЦИЯ ВЫСОТЫ VIEWPORT (Решает проблему с клавиатурой) ---
-// Этот код рассчитывает высоту экрана и сохраняет ее в CSS-переменной
-function setAppHeight() {
-    // Получаем высоту окна (viewport) и делим на 100
+    function setAppHeight() {
     let vh = window.innerHeight * 0.01; 
-    // Устанавливаем эту высоту как пользовательское CSS-свойство
     document.documentElement.style.setProperty('--app-vh', `${vh}px`);
 }
-
-// Вызываем при первой загрузке
 setAppHeight();
-// Важно: Вызываем при каждом изменении размера (выезд/заезд клавиатуры)
 window.addEventListener('resize', setAppHeight);
-// -----------------------------------------------------------------
     const Telegram = window.Telegram.WebApp;
     Telegram.ready();
     Telegram.expand(); 
