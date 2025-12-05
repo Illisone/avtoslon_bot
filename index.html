@@ -11,7 +11,7 @@
 
 <div class="header">
     <div class="logo-car"></div>
-    <div class="logo-text">Автослон</div>
+    <div class="logo-text">АВТОСЛОН</div>
 </div>
 
 <div class="container">
@@ -23,9 +23,9 @@
         <div class="card form-step" data-step="1">
             <h2>1/6. Какой автомобиль Вас интересует?</h2>
             <div class="choice-grid" style="grid-template-columns: repeat(1, 1fr);">
-                <button type="button" class="choice-button" data-value="Новый">🚗 Только новые</button>
-                <button type="button" class="choice-button" data-value="С пробегом">⚙️ С пробегом</button>
-                <button type="button" class="choice-button" data-value="Неважно">🤷‍♀️ Неважно</button>
+                <button type="button" class="choice-button" data-value="Новый">Только новые</button>
+                <button type="button" class="choice-button" data-value="С пробегом">С пробегом</button>
+                <button type="button" class="choice-button" data-value="Неважно">Неважно</button>
             </div>
             <input type="hidden" name="Тип авто" id="carType" required>
             <div class="nav-buttons">
@@ -112,6 +112,7 @@
     const totalSteps = formSteps.length; 
     let currentStep = 1;
 
+    // Глобальные переменные для хранения выбранного диапазона лет
     let startYear = null;
     let endYear = null;
 
@@ -207,6 +208,7 @@
     // --- ФУНКЦИЯ ГЕНЕРАЦИИ ГОДОВ ---
     function generateYearButtons() {
         const currentYear = new Date().getFullYear();
+        // Начинаем с текущего года + 1 (для новых)
         for (let year = currentYear + 1; year >= 2015; year--) {
             const button = document.createElement('button');
             button.type = 'button';
@@ -235,13 +237,11 @@
             
             // Если удалили +7, ставим его обратно
             if (!value.startsWith('+7')) {
-                // Если пользователь набрал 8 или просто цифру 7, исправляем на +7
                 if (value.startsWith('8')) {
                     value = '+7' + value.substring(1);
                 } else if (value.startsWith('7')) {
                     value = '+' + value;
                 } else if (!value.startsWith('+')) {
-                    // Если начал вводить с цифры, добавляем +7
                     value = '+7' + value;
                 }
             }
@@ -250,11 +250,10 @@
             if (value.length < 2 && value !== '+') { 
                  value = '+7';
             } else if (value.length > 2 && !value.startsWith('+7')) {
-                // Если ввели что-то, кроме +7 в начале
                  value = '+7' + value.replace(/\+/g, '').substring(1);
             }
             
-            // Ограничиваем длину (максимум 12 цифр, включая 7, и один плюс = 12 символов)
+            // Ограничиваем длину
             if (value.length > 12) {
                 value = value.substring(0, 12);
             }
@@ -314,7 +313,7 @@
     // ФУНКЦИИ ВОССТАНОВЛЕНИЯ СОСТОЯНИЯ И РЕДАКТИРОВАНИЯ
     // ----------------------------------------
 
-    // Восстанавливает startYear и endYear из поля #carYear
+    // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ: Восстанавливает startYear и endYear из поля #carYear
     function loadYearRangeState() {
         const yearValue = document.getElementById('carYear').value.trim();
         startYear = null;
@@ -322,13 +321,14 @@
 
         if (yearValue) {
             if (yearValue.includes('-')) {
+                // Диапазон: "2020-2023"
                 const parts = yearValue.split('-').map(s => parseInt(s.trim()));
-                // Проверяем, что обе части - числа и не NaN
                 if (!isNaN(parts[0]) && !isNaN(parts[1])) {
                     startYear = parts[0];
                     endYear = parts[1];
                 }
             } else {
+                // Одиночный год: "2022"
                 const year = parseInt(yearValue);
                 if (!isNaN(year)) {
                     startYear = year;
@@ -340,11 +340,12 @@
     function createReviewField(label, value, step) {
         const div = document.createElement('div');
         div.classList.add('review-field');
+        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Добавлен type="button" для предотвращения сброса формы
         div.innerHTML = `
             <span class="review-field-label">${label}</span>
             <span class="review-field-value">
                 ${value}
-                <button class="review-field-edit" data-step="${step}" onclick="editStep(${step})">✏️</button>
+                <button type="button" class="review-field-edit" data-step="${step}" onclick="editStep(${step})">✏️</button>
             </span>
         `;
         return div;
@@ -441,8 +442,8 @@
                     });
                 }
                 
+                // ВОССТАНОВЛЕНИЕ ДЛЯ ШАГА 3 (ГОД ВЫПУСКА)
                 if (stepIndex === 3) {
-                    // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Восстанавливаем состояние перед визуализацией
                     loadYearRangeState();
                     visualizeYearRange();
                 }
@@ -506,6 +507,7 @@
         if (startYear && endYear) {
             const start = Math.min(startYear, endYear);
             const end = Math.max(startYear, endYear);
+            // Сохраняем значение в скрытом поле
             yearInput.value = `${start}-${end}`;
             
             buttons.forEach(btn => {
@@ -519,6 +521,7 @@
                 }
             });
         } else if (startYear) {
+            // Сохраняем значение в скрытом поле
             yearInput.value = startYear;
             document.querySelector(`.year-range-button[data-value="${startYear}"]`)?.classList.add('selected');
         } else {
