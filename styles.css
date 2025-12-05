@@ -13,25 +13,37 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: var(--main-bg);
+    background-color: var(--main-bg); 
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
-    position: relative;
-    min-height: 100%;
-    scrollbar-width: none;
+    position: relative; 
+    
+    /* Восстановлено: Возвращаем min-height: 100% или 100vh */
+    min-height: 100vh; /* Если нужен фуллскрин, но это будет прыгать */
+    
+    scrollbar-width: none; 
     -ms-overflow-style: none;
 }
 
 body::-webkit-scrollbar {
-    display: none;
+    display: none; 
     width: 0;
 }
 
 .container {
     max-width: 600px;
     margin: auto;
-    padding: 0 20px;
-    min-height: calc(var(--app-vh, 1vh) * 100); 
+    
+    /* Отступы по бокам - здесь вы можете оставить 20px или увеличить */
+    padding: 0 20px; 
+    
+    /* Восстановлено: Вернули динамическую высоту, которая вызывает скачки */
+    min-height: 100vh; 
+    
+    /* УДАЛЕНО: height: 100%; */
+    /* УДАЛЕНО: overflow-y: auto; */
+    /* УДАЛЕНО: -webkit-overflow-scrolling: touch; */
+    
     box-sizing: border-box;
 }
 
@@ -357,25 +369,22 @@ textarea:focus {
 /* ======================================= */
 body::before {
     content: '';
-
-    /* 1. ФИКСИРУЕМ ПОЗИЦИЮ */
-    position: fixed;
+    
+    position: fixed; 
     top: 0;
     left: 0;
     width: 100%;
-
-    /* 2. КЛЮЧЕВОЙ ФИКС: ИСПОЛЬЗУЕМ ПЕРЕМЕННУЮ JS */
-    /* Теперь height = 100 * (1% от исходной высоты экрана) */
-    height: calc(var(--app-vh, 1vh) * 100);
-
-    /* 3. КОНСОЛИДИРОВАННЫЙ ФОН */
-    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%),
-        url('./background.png');
+    
+    /* Восстановлено: Вернули динамическую высоту (будет скакать) */
+    height: 100vh; 
+    
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%), 
+                url('./background.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
-    z-index: -1;
+    
+    z-index: -1; 
 }
 
 /* ======================================= */
@@ -507,7 +516,6 @@ body::before {
 
     background-color: var(--main-bg);
     z-index: 10000;
-    /* Очень высокий Z-index для перекрытия всего */
     display: flex;
     justify-content: center;
     align-items: center;
