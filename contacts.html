@@ -44,15 +44,56 @@
             
             </div>
     </div>
+    
+    <style>
+        .contact-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--card-bg-blur);
+            backdrop-filter: blur(8px);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .contact-photo {
+            display: none; 
+        }
+
+        .contact-name {
+            margin: 0 0 5px 0;
+            color: var(--text-color);
+        }
+
+        .contact-role {
+            color: var(--hint-color);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .contact-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+        .contact-button:hover {
+            background-color: var(--accent-light);
+        }
+    </style>
 
     <script>
-        // Стандартный код для Mini App
+        // ГЛАВНОЕ ИСПРАВЛЕНИЕ: Вызываем ready() немедленно
         Telegram.WebApp.ready();
-        Telegram.BackButton.show();
-        
-        Telegram.BackButton.onClick(() => {
-            Telegram.WebApp.close();
-        });
         
         // --- КОД ПРЕДЗАГРУЗЧИКА ---
         const startTime = Date.now();
@@ -72,6 +113,13 @@
             }, remainingTime);
         });
         // --------------------------
+
+        // Настройка навигации
+        Telegram.BackButton.show();
+        
+        Telegram.BackButton.onClick(() => {
+            Telegram.WebApp.close();
+        });
     </script>
 </body>
 
