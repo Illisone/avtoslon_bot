@@ -173,7 +173,7 @@ textarea:focus {
 /* Базовый стиль: ПОЛНОЕ скругление 15px */
 .choice-button {
     padding: 12px 10px;
-    border: 2px solid var(--input-bg);
+    border: 1px solid var(--input-bg);
     border-radius: 15px;
     /* <--- БАЗОВОЕ ПОЛНОЕ СКРУГЛЕНИЕ для ВСЕХ, кроме крайних */
     background-color: var(--input-bg);

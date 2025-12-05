@@ -28,7 +28,7 @@
                 <h2>1/6. Какой автомобиль Вас интересует?</h2>
                 <div class="choice-grid" style="grid-template-columns: repeat(1, 1fr)">
                     <button type="button" class="choice-button" data-value="Новый">
-                        Только новые
+                        Только новый
                     </button>
                     <button type="button" class="choice-button" data-value="С пробегом">
                         С пробегом
@@ -139,17 +139,10 @@
         const totalSteps = formSteps.length;
         let currentStep = 1;
 
-        // Глобальные переменные для хранения выбранного диапазона лет
         let startYear = null;
         let endYear = null;
 
-        // --- ЛОГИКА АВТОПОДСКАЗКИ (ШАГ 2) ---
-
-        // ====================================================
-        // РАСШИРЕННЫЙ СПИСОК МАРОК
-        // ====================================================
         const CAR_BRANDS = [
-            // Премиум и Европа
             "Mercedes-Benz",
             "Мерседес-Бенц",
             "Мерседес",
@@ -172,7 +165,6 @@
             "Cadillac",
             "Кадиллак",
 
-            // Япония и Корея
             "Toyota",
             "Тойота",
             "Hyundai",
@@ -197,7 +189,6 @@
             "SsangYong",
             "Санг Йонг",
 
-            // Китай
             "Geely",
             "Джили",
             "Chery",
@@ -235,7 +226,6 @@
             "JAC",
             "ДЖАК",
 
-            // США и Остальная Европа
             "Volkswagen",
             "Фольксваген",
             "VW",
@@ -265,7 +255,6 @@
         const autocompleteResults = document.getElementById(
             "autocompleteResults"
         );
-
 
         function updateAutocomplete() {
             const inputVal = carModelInput.value.trim().toLowerCase();
@@ -343,23 +332,18 @@
             }
         }
 
-        // ----------------------------------------
-        // ФУНКЦИЯ МАСКИ ТЕЛЕФОНА (+7)
-        // ----------------------------------------
         function setupPhoneInput(input) {
-            // Устанавливаем +7, если поле пусто, и предотвращаем его удаление
             input.addEventListener("focus", function () {
                 if (this.value === "" || this.value === "+") {
                     this.value = "+7";
                 }
-                // Перемещаем курсор в конец
+
                 this.setSelectionRange(this.value.length, this.value.length);
             });
 
             input.addEventListener("input", function () {
-                let value = this.value.replace(/[^\d+]/g, ""); // Удаляем все, кроме цифр и +
+                let value = this.value.replace(/[^\d+]/g, "");
 
-                // Если удалили +7, ставим его обратно
                 if (!value.startsWith("+7")) {
                     if (value.startsWith("8")) {
                         value = "+7" + value.substring(1);
@@ -370,14 +354,12 @@
                     }
                 }
 
-                // Защита от удаления +7
                 if (value.length < 2 && value !== "+") {
                     value = "+7";
                 } else if (value.length > 2 && !value.startsWith("+7")) {
                     value = "+7" + value.replace(/\+/g, "").substring(1);
                 }
 
-                // Ограничиваем длину
                 if (value.length > 12) {
                     value = value.substring(0, 12);
                 }
@@ -387,13 +369,10 @@
             });
         }
 
-        // ----------------------------------------
-        // УПРАВЛЕНИЕ КНОПКАМИ TELEGRAM
-        // ----------------------------------------
         if (Telegram.themeParams) {
             Telegram.MainButton.hide();
             Telegram.BackButton.hide();
-            // Обработка кнопки "Назад" TWA
+
             Telegram.BackButton.onClick(() => {
                 if (currentStep > 1) {
                     currentStep--;
@@ -403,10 +382,6 @@
                 }
             });
         }
-
-        // ----------------------------------------
-        // ОБРАБОТЧИК НАВИГАЦИИ (НАЗАД/ДАЛЕЕ/ОТПРАВИТЬ)
-        // ----------------------------------------
 
         function handleNavigation(event) {
             const button = event.target.closest(".nav-button");
@@ -437,11 +412,6 @@
             .getElementById("carForm")
             .addEventListener("click", handleNavigation);
 
-        // ----------------------------------------
-        // ФУНКЦИИ ВОССТАНОВЛЕНИЯ СОСТОЯНИЯ И РЕДАКТИРОВАНИЯ
-        // ----------------------------------------
-
-        // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ: Восстанавливает startYear и endYear из поля #carYear
         function loadYearRangeState() {
             const yearValue = document.getElementById("carYear").value.trim();
             startYear = null;
@@ -449,14 +419,12 @@
 
             if (yearValue) {
                 if (yearValue.includes("-")) {
-                    // Диапазон: "2020-2023"
                     const parts = yearValue.split("-").map((s) => parseInt(s.trim()));
                     if (!isNaN(parts[0]) && !isNaN(parts[1])) {
                         startYear = parts[0];
                         endYear = parts[1];
                     }
                 } else {
-                    // Одиночный год: "2022"
                     const year = parseInt(yearValue);
                     if (!isNaN(year)) {
                         startYear = year;
@@ -468,7 +436,6 @@
         function createReviewField(label, value, step) {
             const div = document.createElement("div");
             div.classList.add("review-field");
-            // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Добавлен type="button" для предотвращения сброса формы
             div.innerHTML = `
             <span class="review-field-label">${label}</span>
             <span class="review-field-value">
@@ -515,15 +482,10 @@
             }
         }
 
-        // ФУНКЦИЯ РЕДАКТИРОВАНИЯ ШАГА
         window.editStep = function (step) {
             currentStep = step;
             updateUI();
         };
-
-        // ----------------------------------------
-        // УПРАВЛЕНИЕ UI
-        // ----------------------------------------
 
         function updateStepDots() {
             stepIndicator.innerHTML = "";
@@ -561,7 +523,6 @@
                         }
                     }
 
-                    // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ ДЛЯ ТЕКУЩЕГО ШАГА
                     if (stepIndex === 1) {
                         const carType = document.getElementById("carType").value;
                         document
@@ -574,43 +535,35 @@
                             });
                     }
 
-                    // ВОССТАНОВЛЕНИЕ ДЛЯ ШАГА 3 (ГОД ВЫПУСКА)
                     if (stepIndex === 3) {
                         loadYearRangeState();
                         visualizeYearRange();
                     }
 
                     if (stepIndex === 5) {
-                        // Повторное применение маски при возврате на шаг 5 (для фокусировки)
                         setupPhoneInput(document.getElementById("clientPhone"));
                     }
                 }
             });
 
             if (currentStep === totalSteps) {
-                // Шаг 6
                 populateReviewData();
             }
 
             const currentStepElement = document.querySelector(
                 `.form-step[data-step="${currentStep}"]`
             );
-            // Ищем первое видимое поле ввода
+
             const firstInput = currentStepElement
                 ? currentStepElement.querySelector('input:not([type="hidden"])')
                 : null;
 
             if (firstInput) {
-                // Используем preventScroll: true для предотвращения "прыжка" экрана
                 setTimeout(() => {
                     firstInput.focus({ preventScroll: true });
                 }, 10);
             }
         }
-
-        // ----------------------------------------
-        // ПРОВЕРКА ВАЛИДНОСТИ ТЕКУЩЕГО ШАГА
-        // ----------------------------------------
 
         function checkStepValidity() {
             switch (currentStep) {
@@ -626,7 +579,7 @@
                     const phoneValue = document
                         .getElementById("clientPhone")
                         .value.trim();
-                    return phoneValue.length === 12; // Проверяем на полную длину +7 (12 символов)
+                    return phoneValue.length === 12;
                 case 6:
                     return true;
                 default:
@@ -634,7 +587,6 @@
             }
         }
 
-        // --- ВИЗУАЛИЗАЦИЯ ДИАПАЗОНА ГОДОВ ---
         function visualizeYearRange() {
             const yearInput = document.getElementById("carYear");
             const buttons = document.querySelectorAll(".year-range-button");
@@ -646,7 +598,6 @@
             if (startYear && endYear) {
                 const start = Math.min(startYear, endYear);
                 const end = Math.max(startYear, endYear);
-                // Сохраняем значение в скрытом поле
                 yearInput.value = `${start}-${end}`;
 
                 buttons.forEach((btn) => {
@@ -660,7 +611,6 @@
                     }
                 });
             } else if (startYear) {
-                // Сохраняем значение в скрытом поле
                 yearInput.value = startYear;
                 document
                     .querySelector(`.year-range-button[data-value="${startYear}"]`)
@@ -669,7 +619,6 @@
                 yearInput.value = "";
             }
 
-            // Обновляем состояние кнопки "ДАЛЕЕ" вручную после визуализации
             const currentStepElement = document.querySelector(
                 `.form-step[data-step="${currentStep}"]`
             );
@@ -685,11 +634,6 @@
             }
         }
 
-        // ----------------------------------------
-        // ОБРАБОТКА ВЫБОРА И ПОЛЕЙ ВВОДА
-        // ----------------------------------------
-
-        // Шаг 1: Выбор типа авто
         document
             .querySelectorAll('.form-step[data-step="1"] .choice-button')
             .forEach((button) => {
@@ -703,7 +647,6 @@
                 });
             });
 
-        // --- ЛОГИКА ВЫБОРА ДИАПАЗОНА ГОДОВ (ШАГ 3) ---
         function handleYearSelection(event) {
             const button = event.target.closest(".year-range-button");
             if (!button) return;
@@ -714,7 +657,6 @@
                 startYear = year;
                 endYear = null;
             } else if (endYear === null) {
-                // Если выбранная дата меньше начальной, меняем их местами
                 if (year < startYear) {
                     endYear = startYear;
                     startYear = year;
@@ -722,7 +664,6 @@
                     endYear = year;
                 }
             } else {
-                // Сбрасываем диапазон, начинаем новый
                 startYear = year;
                 endYear = null;
             }
@@ -732,43 +673,34 @@
 
         yearButtonsContainer.addEventListener("click", handleYearSelection);
 
-        // Обработчики для полей ввода для динамической проверки
         document
             .querySelectorAll('input:not([type="hidden"])')
             .forEach((input) => {
                 input.addEventListener("input", () => {
-                    // Обновляем UI для активации кнопки "ДАЛЕЕ"
                     if (currentStep !== 3) {
                         updateUI();
                     }
                 });
             });
 
-        // Отдельный обработчик для автоподсказки
         carModelInput.addEventListener("input", () => {
             updateAutocomplete();
             updateUI();
         });
 
-        // Обработчики для корректной работы автоподсказки на мобильных
         carModelInput.addEventListener("blur", () => {
-            // Небольшая задержка, чтобы клик по подсказке успел сработать
             setTimeout(() => {
                 autocompleteResults.style.display = "none";
             }, 150);
         });
 
         carModelInput.addEventListener("focus", () => {
-            updateAutocomplete(); // Показываем список при фокусе, если есть текст
+            updateAutocomplete();
         });
-
-        // ----------------------------------------
-        // ОТПРАВКА ФОРМЫ
-        // ----------------------------------------
 
         function submitForm() {
             const finalButton = document.getElementById("finalSubmitButton");
-            if (finalButton.textContent === "ОТПРАВЛЕНО") return;
+            if (finalButton.textContent === "Отправлено") return;
 
             const formData = {};
             document.querySelectorAll("input").forEach((input) => {
@@ -780,7 +712,7 @@
             try {
                 Telegram.sendData(JSON.stringify(formData));
 
-                finalButton.textContent = "ОТПРАВЛЕНО";
+                finalButton.textContent = "Отправлено";
                 finalButton.classList.remove("active");
 
                 reviewDataContainer.innerHTML =
@@ -793,13 +725,11 @@
         }
 
         generateYearButtons();
-        setupPhoneInput(document.getElementById("clientPhone")); // <-- Инициализация маски +7
+        setupPhoneInput(document.getElementById("clientPhone"));
         updateUI();
 
-        // PRELOADER
         const startTime = Date.now();
         const MINIMUM_DISPLAY_TIME = 2000;
-
 
         window.addEventListener("load", () => {
             const preloader = document.getElementById("preloader");
