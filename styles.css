@@ -23,14 +23,14 @@ body {
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
     position: relative; 
-    min-height: 100%; /* Правильно: не используем vh здесь */
+    /* !!! ИСПРАВЛЕНИЕ: min-height должен быть 100%, не 100vh !!! */
+    min-height: 100%; 
     
-    /* Скрытие скроллбара */
+    /* СКРЫТИЕ СКРОЛЛБАРА */
     scrollbar-width: none; 
     -ms-overflow-style: none;
 }
-
-/* Добавляем скрытие для WebKit, если не сделали ранее */
+/* Скрытие для WebKit (Chrome, Safari, Telegram App) */
 body::-webkit-scrollbar {
     display: none; 
     width: 0;
@@ -363,20 +363,30 @@ textarea:focus {
 /* ======================================= */
 /* 11. НАЛОЖЕНИЕ НА ФОН (ФИКСИРОВАННЫЙ БЕЗ СКАЧКОВ) */
 /* ======================================= */
+/* ======================================= */
+/* 11. НАЛОЖЕНИЕ НА ФОН (ФИКСИРОВАННЫЙ БЕЗ СКАЧКОВ) */
+/* ======================================= */
 body::before {
     content: '';
+    
+    /* 1. ФИКСИРУЕМ ПОЗИЦИЮ */
     position: fixed; 
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh; 
-    min-height: -webkit-fill-available; 
+    
+    /* 2. КЛЮЧЕВОЙ ФИКС: ИСПОЛЬЗУЕМ ПЕРЕМЕННУЮ JS */
+    /* Теперь height = 100 * (1% от исходной высоты экрана) */
+    height: calc(var(--app-vh, 1vh) * 100); 
+    
+    /* 3. КОНСОЛИДИРОВАННЫЙ ФОН */
     background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%), 
                 url('./background.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: -1;
+    
+    z-index: -1; 
 }
 /* ======================================= */
 /* 12. СТИЛИ ДЛЯ FAQ-АККОРДЕОНА (КАРТОЧКИ) */
