@@ -23,11 +23,11 @@ body {
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
     
-    /* === ФОНОВОЕ ИЗОБРАЖЕНИЕ === */
+    /* === ФОНОВОЕ ИЗОБРАЖЕНИЕ (ИСПОЛЬЗУЕМ ВАШ URL) === */
     background-image: url('https://i.ibb.co/hxVmpfzm/hero-bg.webp'); 
-    background-size: cover;          
-    background-position: center;     
-    background-attachment: fixed;    
+    background-size: cover;          /* Гарантирует, что изображение покроет весь экран */
+    background-position: center;     /* Центрирует изображение */
+    background-attachment: fixed;    /* Фиксирует изображение, чтобы оно не скроллилось */
     background-repeat: no-repeat;
 }
 

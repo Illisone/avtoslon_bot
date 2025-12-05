@@ -11,7 +11,7 @@
 
 <div class="header">
     <div class="logo-car"></div>
-    <div class="logo-text">Автослон</div>
+    <div class="logo-text">АВТОСЛОН</div>
 </div>
 
 <div class="container">
@@ -301,7 +301,7 @@
         }
     }
     
-    // ФУНКЦИЯ РЕДАКТИРОВАНИЯ ШАГА (исправлена)
+    // ФУНКЦИЯ РЕДАКТИРОВАНИЯ ШАГА
     window.editStep = function(step) {
         currentStep = step;
         updateUI();
@@ -359,12 +359,24 @@
                 }
                 
                 if (stepIndex === 2) {
+                    // Явное восстановление значения для надежности (Исправление сброса)
+                    document.getElementById('carModel').value = document.getElementById('carModel').value;
                     updateAutocomplete();
                 }
                 
                 if (stepIndex === 3) {
                     loadYearRangeState();
                     visualizeYearRange();
+                }
+                
+                if (stepIndex === 4) {
+                    // Явное восстановление значения для надежности (Исправление сброса)
+                    document.getElementById('clientName').value = document.getElementById('clientName').value;
+                }
+                
+                if (stepIndex === 5) {
+                    // Явное восстановление значения для надежности (Исправление сброса)
+                    document.getElementById('clientPhone').value = document.getElementById('clientPhone').value;
                 }
             }
         });
@@ -378,7 +390,7 @@
         const firstInput = currentStepElement ? currentStepElement.querySelector('input:not([type="hidden"])') : null;
 
         if (firstInput) {
-            // Добавляем { preventScroll: true } для предотвращения "прыжка" экрана
+            // Используем preventScroll: true для предотвращения "прыжка" экрана
             setTimeout(() => {
                 firstInput.focus({ preventScroll: true }); 
             }, 10); 
