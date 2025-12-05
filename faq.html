@@ -6,178 +6,65 @@
     <title>Популярные вопросы</title>
     <link rel="stylesheet" href="styles.css"> 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        /* СТИЛИ СПЕЦИФИЧНЫЕ ДЛЯ FAQ */
-        .faq-item {
-            margin-bottom: 15px;
-            /* Используем градиентную линию для более стильного разделителя */
-            border-bottom: 1px solid rgba(0, 99, 199, 0.2); 
-            border-radius: 10px;
-            overflow: hidden; /* Важно для аккордеона */
-        }
-
-        .faq-question {
-            padding: 15px 10px;
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-color);
-            transition: color 0.2s, background-color 0.2s;
-        }
-
-        .faq-question:hover {
-            color: var(--accent-light);
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-            padding: 0 10px;
-            font-size: 0.95em;
-            color: var(--hint-color);
-            background-color: rgba(0, 0, 0, 0.1); /* Небольшая подложка для ответа */
-        }
-
-        .faq-answer p {
-            margin-top: 0;
-            padding-bottom: 15px;
-            line-height: 1.5;
-        }
-        
-        /* Стили для маркеров (для подпунктов из текста) */
-        .faq-answer ul {
-            padding-left: 20px;
-            padding-bottom: 15px;
-            list-style-type: none; /* Убираем стандартные маркеры */
-        }
-
-        .faq-answer ul li {
-            margin-bottom: 8px;
-            position: relative;
-            padding-left: 15px;
-        }
-        
-        /* Свои маркеры в цвет акцента */
-        .faq-answer ul li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: var(--accent-light);
-            font-weight: bold;
-        }
-
-        /* Стиль для активного аккордеона */
-        .faq-item.active .faq-answer {
-            max-height: 1000px; /* Достаточно большое значение для раскрытия */
-            transition: max-height 0.5s ease-in;
-        }
-        
-        .faq-item.active .faq-question {
-            color: var(--accent-light);
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-
-        /* Иконка-стрелка */
-        .faq-icon {
-            font-size: 1.5em;
-            margin-left: 10px;
-            transform: rotate(0deg);
-            transition: transform 0.3s;
-            color: var(--accent-light);
-            font-weight: 900;
-        }
-
-        .faq-item.active .faq-icon {
-            transform: rotate(180deg);
-        }
-    </style>
 </head>
 <body>
+    <div class="container">
+        
+        <header class="header">
+            <h1 class="page-title">Популярные вопросы</h1>
+        </header>
 
-<div class="header">
-    <div class="logo-car">❓</div>
-    <div class="logo-text">ПОПУЛЯРНЫЕ ВОПРОСЫ</div>
-</div>
-
-<div class="container">
-    
-    <div class="card">
         <div id="faqAccordion">
             
             <div class="faq-item">
                 <div class="faq-question">
                     <span>Сколько занимает срок доставки автомобиля?</span>
-                    <span class="faq-icon">⌄</span>
+                    <span class="faq-icon"></span>
                 </div>
                 <div class="faq-answer">
-                    <p>Срок доставки зависит от страны и логистики:</p>
-                    <ul>
-                        <li>**Корея/Китай:** 3–8 недель.</li>
-                        <li>**США:** 4–10 недель.</li>
-                        <li>**Япония/Европа:** 5–12 недель.</li>
-                    </ul>
-                    <p>Мы предоставляем полный трекинг и постоянную связь с логистами.</p>
+                    <p>Срок доставки зависит от страны: 
+                        <ul>
+                            <li>**Япония/Корея:** ~4-6 недель.</li>
+                            <li>**Китай/Европа/США:** ~6-9 недель.</li>
+                        </ul>
+                        Мы всегда стараемся оптимизировать логистику, чтобы вы получили автомобиль как можно быстрее.
+                    </p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question">
-                    <span>Как происходит ценообразование автомобиля и доставки?</span>
-                    <span class="faq-icon">⌄</span>
+                    <span>Какие у меня будут гарантии безопасности?</span>
+                    <span class="faq-icon"></span>
                 </div>
                 <div class="faq-answer">
-                    <p>Конечная цена состоит из нескольких прозрачных этапов:</p>
+                    <p>Наша безопасность строится на **прозрачности и документации:**</p>
                     <ul>
-                        <li>**Цена на площадке/аукционе** (инвойс от продавца).</li>
-                        <li>**Логистика:** доставка по стране, фрахт (море), доставка по РФ.</li>
-                        <li>**Обязательные платежи:** Таможня, ТПО, СБКТС, утилизационный сбор.</li>
-                        <li>**Комиссия компании:** Наша фиксированная комиссия за подбор, проверку и сопровождение сделки.</li>
+                        <li>**Официальный договор:** Подписываем юридически обязывающий контракт, где прописаны все условия и ответственность сторон.</li>
+                        <li>**Страхование:** Автомобиль страхуется на время перевозки.</li>
+                        <li>**Банковский перевод:** Все платежи осуществляются через банк, что подтверждает легальность сделки.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question">
-                    <span>Какие гарантии безопасности я получаю?</span>
-                    <span class="faq-icon">⌄</span>
+                    <span>Как происходит проверка автомобиля?</span>
+                    <span class="faq-icon"></span>
                 </div>
                 <div class="faq-answer">
-                    <p>Наша гарантия — это многоступенчатая система проверки, исключающая любые сомнения:</p>
+                    <p>Мы гарантируем полную проверку, исключающую любые сомнения:</p>
                     <ul>
-                        <li>**Договор:** Работаем по официальному договору, где прописаны сроки, стоимость и ответственность.</li>
-                        <li>**Проверка истории:** Глубокая проверка по международным базам (Carfax, AutoCheck, KBC и др.) на предмет инцидентов и пробега.</li>
-                        <li>**Фото- и видеофиксация:** Полный детальный отчёт «до» отправки.</li>
-                        <li>**Страховка:** Ваш автомобиль застрахован на время перевозки, все повреждения компенсируются.</li>
+                        <li>**Глубокая проверка по международным базам:** Carfax, AutoCheck, KBC (для США/Кореи) для отслеживания инцидентов и сервисных записей.</li>
+                        <li>**Полная фото- и видеофиксация «до»:** Вы получаете детальный отчет с десятками снимков и видео высокого качества перед отправкой.</li>
                     </ul>
                 </div>
             </div>
-            
-             <div class="faq-item">
-                <div class="faq-question">
-                    <span>Какие документы я получаю при покупке авто?</span>
-                    <span class="faq-icon">⌄</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Вы получаете полный комплект для постановки на учет:</p>
-                    <ul>
-                        <li>**ЭПТС (Электронный паспорт транспортного средства):** Основной документ.</li>
-                        <li>**Контракт:** Договор купли-продажи с нашей компанией.</li>
-                        <li>**Инвойсы:** Документы об оплате (включая таможенные).</li>
-                        <li>**СБКТС:** Свидетельство о безопасности конструкции транспортного средства.</li>
-                        <li>**Фото/видео отчёт** из страны отправления.</li>
-                    </ul>
-                </div>
-            </div>
-            
+
             <div class="faq-item">
                 <div class="faq-question">
                     <span>Можно ли купить авто в кредит/лизинг?</span>
-                    <span class="faq-icon">⌄</span>
+                    <span class="faq-icon"></span>
                 </div>
                 <div class="faq-answer">
                     <p>Да, часто оформляют через банки в РФ уже после получения машины. Мы предоставляем вам все необходимые документы и закрывающие акты для финансового учреждения.</p>
@@ -218,7 +105,6 @@
         // Переключаем активный класс для текущего элемента
         item.classList.toggle('active');
     });
-
 </script>
 
 </body>

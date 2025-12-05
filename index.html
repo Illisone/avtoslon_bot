@@ -1,651 +1,673 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Бесплатный подбор авто</title>
-    <link rel="stylesheet" href="styles.css"> 
+    <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
+
 <body>
 
-<div class="header">
-    <div class="logo-car"></div>
-    <div class="logo-text">АВТОСЛОН</div>
-</div>
+    <div class="header">
+        <div class="logo-car"></div>
+        <div class="logo-text">АВТОСЛОН</div>
+    </div>
 
-<div class="container">
-    
-    <div class="step-indicator" id="stepIndicator">
-        </div>
-    
-    <form id="carForm">
-        <div class="card form-step" data-step="1">
-            <h2>1/6. Какой автомобиль Вас интересует?</h2>
-            <div class="choice-grid" style="grid-template-columns: repeat(1, 1fr);">
-                <button type="button" class="choice-button" data-value="Новый">Только новые</button>
-                <button type="button" class="choice-button" data-value="С пробегом">С пробегом</button>
-                <button type="button" class="choice-button" data-value="Неважно">Неважно</button>
-            </div>
-            <input type="hidden" name="Тип авто" id="carType" required>
-            <div class="nav-buttons">
-                <button type="button" class="nav-button back" data-action="back">НАЗАД</button>
-                <button type="button" class="nav-button next" data-action="next">ДАЛЕЕ</button>
-            </div>
+    <div class="container">
+
+        <div class="step-indicator" id="stepIndicator">
         </div>
 
-        <div class="card form-step" data-step="2" style="display:none;">
-            <h2>2/6. Укажите марку и модель авто</h2>
-            
-            <p class="label">Марка/Модель</p>
-            <input type="text" name="Марка/Модель" id="carModel" placeholder="Начните вводить название марки..." required>
-            
-            <div id="autocompleteResults" class="autocomplete-list">
+        <form id="carForm">
+            <div class="card form-step" data-step="1">
+                <h2>1/6. Какой автомобиль Вас интересует?</h2>
+                <div class="choice-grid" style="grid-template-columns: repeat(1, 1fr);">
+                    <button type="button" class="choice-button" data-value="Новый">Только новые</button>
+                    <button type="button" class="choice-button" data-value="С пробегом">С пробегом</button>
+                    <button type="button" class="choice-button" data-value="Неважно">Неважно</button>
                 </div>
-            
-            <div class="nav-buttons">
-                <button type="button" class="nav-button back" data-action="back">НАЗАД</button>
-                <button type="button" class="nav-button next" data-action="next">ДАЛЕЕ</button>
-            </div>
-        </div>
-
-        <div class="card form-step" data-step="3" style="display:none;">
-            <h2>3/6. Желаемый год выпуска</h2>
-            <p class="label">Выберите диапазон (например, 2020 — 2024)</p>
-            <input type="hidden" name="Год выпуска" id="carYear" required> 
-            
-            <div class="choice-grid" id="yearButtons">
+                <input type="hidden" name="Тип авто" id="carType" required>
+                <div class="nav-buttons">
+                    <button type="button" class="nav-button back" data-action="back">Назад</button>
+                    <button type="button" class="nav-button next" data-action="next">Далее</button>
                 </div>
-            <div class="nav-buttons">
-                <button type="button" class="nav-button back" data-action="back">НАЗАД</button>
-                <button type="button" class="nav-button next" data-action="next">ДАЛЕЕ</button>
             </div>
-        </div>
 
-        <div class="card form-step" data-step="4" style="display:none;">
-            <h2>4/6. Как Вас зовут?</h2>
-            <p class="label">Ваше Имя</p>
-            <input type="text" name="Имя" id="clientName" placeholder="Иван" required>
-            <div class="nav-buttons">
-                <button type="button" class="nav-button back" data-action="back">НАЗАД</button>
-                <button type="button" class="nav-button next" data-action="next">ДАЛЕЕ</button>
-            </div>
-        </div>
+            <div class="card form-step" data-step="2" style="display:none;">
+                <h2>2/6. Укажите марку и модель авто</h2>
 
-        <div class="card form-step" data-step="5" style="display:none;">
-            <h2>5/6. Ваш номер телефона</h2>
-            <p class="label">Телефон</p>
-            <input type="tel" name="Телефон" id="clientPhone" placeholder="+7 9ХХ ХХХ-ХХ-ХХ" required>
-            <div class="nav-buttons">
-                <button type="button" class="nav-button back" data-action="back">НАЗАД</button>
-                <button type="button" class="nav-button next" data-action="next">ПРОВЕРИТЬ ДАННЫЕ</button>
-            </div>
-        </div>
-        
-        <div class="card form-step" data-step="6" style="display:none;">
-            <h2>6/6. Проверьте данные</h2>
-            <div id="reviewData">
+                <p class="label">Марка/Модель</p>
+                <input type="text" name="Марка/Модель" id="carModel" placeholder="Начните вводить название марки..."
+                    required>
+
+                <div id="autocompleteResults" class="autocomplete-list">
                 </div>
-            
-            <div class="nav-buttons">
-                <button type="button" class="nav-button back" data-action="back">НАЗАД</button>
-                <button type="button" class="nav-button next active" id="finalSubmitButton" data-action="submit">ОТПРАВИТЬ</button>
+
+                <div class="nav-buttons">
+                    <button type="button" class="nav-button back" data-action="back">Назад</button>
+                    <button type="button" class="nav-button next" data-action="next">Далее</button>
+                </div>
             </div>
-        </div>
-        
-    </form>
-</div>
 
-<script>
-    // =======================================
-    // JAVASCRIPT ЛОГИКА ДЛЯ MINI APP
-    // =======================================
-    
-    const Telegram = window.Telegram.WebApp;
-    Telegram.ready();
-    Telegram.expand(); 
-    
-    const formSteps = document.querySelectorAll('.form-step');
-    const stepIndicator = document.getElementById('stepIndicator');
-    const yearButtonsContainer = document.getElementById('yearButtons');
-    const reviewDataContainer = document.getElementById('reviewData');
-    const totalSteps = formSteps.length; 
-    let currentStep = 1;
+            <div class="card form-step" data-step="3" style="display:none;">
+                <h2>3/6. Желаемый год выпуска</h2>
+                <p class="label">Выберите диапазон (например, 2020 — 2024)</p>
+                <input type="hidden" name="Год выпуска" id="carYear" required>
 
-    // Глобальные переменные для хранения выбранного диапазона лет
-    let startYear = null;
-    let endYear = null;
+                <div class="choice-grid" id="yearButtons">
+                </div>
+                <div class="nav-buttons">
+                    <button type="button" class="nav-button back" data-action="back">Назад</button>
+                    <button type="button" class="nav-button next" data-action="next">Далее</button>
+                </div>
+            </div>
 
-    // --- ЛОГИКА АВТОПОДСКАЗКИ (ШАГ 2) ---
-    
-    // ====================================================
-    // РАСШИРЕННЫЙ СПИСОК МАРОК
-    // ====================================================
-    const CAR_BRANDS = [
-        // Премиум и Европа
-        "Mercedes-Benz", "Мерседес-Бенц", "Мерседес", "BMW", "БМВ", "Audi", "Ауди", 
-        "Lexus", "Лексус", "Porsche", "Порше", "Land Rover", "Ленд Ровер", "Volvo", "Вольво", 
-        "Genesis", "Генезис", "Tesla", "Тесла", "Cadillac", "Кадиллак",
-        
-        // Япония и Корея
-        "Toyota", "Тойота", "Hyundai", "Хендай", "Хюндай", "Kia", "Киа", "Nissan", "Ниссан", 
-        "Mazda", "Мазда", "Honda", "Хонда", "Subaru", "Субару", "Mitsubishi", "Митсубиши", 
-        "Suzuki", "Сузуки", "Infiniti", "Инфинити", "SsangYong", "Санг Йонг",
-        
-        // Китай
-        "Geely", "Джили", "Chery", "Чери", "BYD", "БИД", "Haval", "Хавейл", "Exeed", "Эксид", 
-        "Changan", "Чанган", "Great Wall", "Грейт Волл", "Tank", "Танк", "Jetour", "Джетур", 
-        "FAW", "ФАВ", "Hongqi", "Хончи", "Li Auto", "Ли Авто", "Livan", "Ливан", "OMODA", "Омода",
-        "Voyah", "Воя", "Zeekr", "Зикр", "GAC", "ГАК", "JAC", "ДЖАК",
-        
-        // США и Остальная Европа
-        "Volkswagen", "Фольксваген", "VW", "Ford", "Форд", "Chevrolet", "Шевроле", "Skoda", "Шкода", 
-        "Renault", "Рено", "Peugeot", "Пежо", "Citroen", "Ситроен", "Opel", "Опель", 
-        "Jeep", "Джип", "Dodge", "Додж", "Fiat", "Фиат",
-        
-        // Россия
-        "LADA", "Лада", "УАЗ", "UAZ", "ГАЗ", "GAZ", "Москвич"
-    ];
+            <div class="card form-step" data-step="4" style="display:none;">
+                <h2>4/6. Как Вас зовут?</h2>
+                <p class="label">Ваше Имя</p>
+                <input type="text" name="Имя" id="clientName" placeholder="Иван" required>
+                <div class="nav-buttons">
+                    <button type="button" class="nav-button back" data-action="back">Назад</button>
+                    <button type="button" class="nav-button next" data-action="next">Далее</button>
+                </div>
+            </div>
 
-    const carModelInput = document.getElementById('carModel');
-    const autocompleteResults = document.getElementById('autocompleteResults');
+            <div class="card form-step" data-step="5" style="display:none;">
+                <h2>5/6. Ваш номер телефона</h2>
+                <p class="label">Телефон</p>
+                <input type="tel" name="Телефон" id="clientPhone" placeholder="+7 9ХХ ХХХ-ХХ-ХХ" required>
+                <div class="nav-buttons">
+                    <button type="button" class="nav-button back" data-action="back">Назад</button>
+                    <button type="button" class="nav-button next" data-action="next">Далее</button>
+                </div>
+            </div>
 
-    // ФУНКЦИЯ ДЛЯ ОТОБРАЖЕНИЯ ПОДСКАЗОК
-    function updateAutocomplete() {
-        const inputVal = carModelInput.value.trim().toLowerCase();
-        autocompleteResults.innerHTML = ''; 
+            <div class="card form-step" data-step="6" style="display:none;">
+                <h2>6/6. Проверьте данные</h2>
+                <div id="reviewData">
+                </div>
 
-        if (inputVal.length === 0) {
-            autocompleteResults.style.display = 'none';
-            return;
-        }
+                <div class="nav-buttons">
+                    <button type="button" class="nav-button back" data-action="back">Назад</button>
+                    <button type="button" class="nav-button next active" id="finalSubmitButton"
+                        data-action="submit">Отправить</button>
+                </div>
+            </div>
 
-        const filteredBrands = CAR_BRANDS.filter(brand => 
-            // Ищем совпадение по началу слова
-            brand.toLowerCase().startsWith(inputVal)
-        ).slice(0, 5); 
+        </form>
+    </div>
 
-        if (filteredBrands.length === 0) {
-            autocompleteResults.style.display = 'none';
-            return;
-        }
+    <script>
+        // =======================================
+        // JAVASCRIPT ЛОГИКА ДЛЯ MINI APP
+        // =======================================
 
-        filteredBrands.forEach(brand => {
-            const item = document.createElement('div');
-            item.classList.add('autocomplete-item');
-            
-            const brandLower = brand.toLowerCase();
-            const inputValLength = inputVal.length;
-            let boldPart = brand;
-            let restPart = '';
-            
-            // Находим индекс, где начинается совпадение
-            const matchIndex = brandLower.indexOf(inputVal);
+        const Telegram = window.Telegram.WebApp;
+        Telegram.ready();
+        Telegram.expand();
 
-            if (matchIndex === 0) {
-                 // Если совпадение в начале
-                boldPart = brand.substring(0, inputValLength);
-                restPart = brand.substring(inputValLength);
-            }
-            
-            item.innerHTML = `<strong>${boldPart}</strong>${restPart}`;
-            
-            item.addEventListener('click', () => {
-                // Вставляем полное, оригинальное название марки
-                carModelInput.value = brand + ' ';
-                autocompleteResults.innerHTML = ''; 
+        const formSteps = document.querySelectorAll('.form-step');
+        const stepIndicator = document.getElementById('stepIndicator');
+        const yearButtonsContainer = document.getElementById('yearButtons');
+        const reviewDataContainer = document.getElementById('reviewData');
+        const totalSteps = formSteps.length;
+        let currentStep = 1;
+
+        // Глобальные переменные для хранения выбранного диапазона лет
+        let startYear = null;
+        let endYear = null;
+
+        // --- ЛОГИКА АВТОПОДСКАЗКИ (ШАГ 2) ---
+
+        // ====================================================
+        // РАСШИРЕННЫЙ СПИСОК МАРОК
+        // ====================================================
+        const CAR_BRANDS = [
+            // Премиум и Европа
+            "Mercedes-Benz", "Мерседес-Бенц", "Мерседес", "BMW", "БМВ", "Audi", "Ауди",
+            "Lexus", "Лексус", "Porsche", "Порше", "Land Rover", "Ленд Ровер", "Volvo", "Вольво",
+            "Genesis", "Генезис", "Tesla", "Тесла", "Cadillac", "Кадиллак",
+
+            // Япония и Корея
+            "Toyota", "Тойота", "Hyundai", "Хендай", "Хюндай", "Kia", "Киа", "Nissan", "Ниссан",
+            "Mazda", "Мазда", "Honda", "Хонда", "Subaru", "Субару", "Mitsubishi", "Митсубиши",
+            "Suzuki", "Сузуки", "Infiniti", "Инфинити", "SsangYong", "Санг Йонг",
+
+            // Китай
+            "Geely", "Джили", "Chery", "Чери", "BYD", "БИД", "Haval", "Хавейл", "Exeed", "Эксид",
+            "Changan", "Чанган", "Great Wall", "Грейт Волл", "Tank", "Танк", "Jetour", "Джетур",
+            "FAW", "ФАВ", "Hongqi", "Хончи", "Li Auto", "Ли Авто", "Livan", "Ливан", "OMODA", "Омода",
+            "Voyah", "Воя", "Zeekr", "Зикр", "GAC", "ГАК", "JAC", "ДЖАК",
+
+            // США и Остальная Европа
+            "Volkswagen", "Фольксваген", "VW", "Ford", "Форд", "Chevrolet", "Шевроле", "Skoda", "Шкода",
+            "Renault", "Рено", "Peugeot", "Пежо", "Citroen", "Ситроен", "Opel", "Опель",
+            "Jeep", "Джип", "Dodge", "Додж", "Fiat", "Фиат",
+
+            // Россия
+            "LADA", "Лада", "УАЗ", "UAZ", "ГАЗ", "GAZ", "Москвич"
+        ];
+
+        const carModelInput = document.getElementById('carModel');
+        const autocompleteResults = document.getElementById('autocompleteResults');
+
+        // ФУНКЦИЯ ДЛЯ ОТОБРАЖЕНИЯ ПОДСКАЗОК
+        function updateAutocomplete() {
+            const inputVal = carModelInput.value.trim().toLowerCase();
+            autocompleteResults.innerHTML = '';
+
+            if (inputVal.length === 0) {
                 autocompleteResults.style.display = 'none';
-                carModelInput.focus(); 
-                updateUI(); 
-            });
-            
-            autocompleteResults.appendChild(item);
-        });
-
-        autocompleteResults.style.display = 'block';
-    }
-    
-    // --- ФУНКЦИЯ ГЕНЕРАЦИИ ГОДОВ ---
-    function generateYearButtons() {
-        const currentYear = new Date().getFullYear();
-        // Начинаем с текущего года + 1 (для новых)
-        for (let year = currentYear + 1; year >= 2015; year--) {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.classList.add('choice-button', 'year-range-button');
-            button.dataset.value = year;
-            button.textContent = year;
-            yearButtonsContainer.appendChild(button);
-        }
-    }
-
-    // ----------------------------------------
-    // ФУНКЦИЯ МАСКИ ТЕЛЕФОНА (+7)
-    // ----------------------------------------
-    function setupPhoneInput(input) {
-        // Устанавливаем +7, если поле пусто, и предотвращаем его удаление
-        input.addEventListener('focus', function() {
-            if (this.value === '' || this.value === '+') {
-                this.value = '+7';
+                return;
             }
-            // Перемещаем курсор в конец
-            this.setSelectionRange(this.value.length, this.value.length);
-        });
-        
-        input.addEventListener('input', function() {
-            let value = this.value.replace(/[^\d+]/g, ''); // Удаляем все, кроме цифр и +
-            
-            // Если удалили +7, ставим его обратно
-            if (!value.startsWith('+7')) {
-                if (value.startsWith('8')) {
-                    value = '+7' + value.substring(1);
-                } else if (value.startsWith('7')) {
-                    value = '+' + value;
-                } else if (!value.startsWith('+')) {
-                    value = '+7' + value;
+
+            const filteredBrands = CAR_BRANDS.filter(brand =>
+                // Ищем совпадение по началу слова
+                brand.toLowerCase().startsWith(inputVal)
+            ).slice(0, 5);
+
+            if (filteredBrands.length === 0) {
+                autocompleteResults.style.display = 'none';
+                return;
+            }
+
+            filteredBrands.forEach(brand => {
+                const item = document.createElement('div');
+                item.classList.add('autocomplete-item');
+
+                const brandLower = brand.toLowerCase();
+                const inputValLength = inputVal.length;
+                let boldPart = brand;
+                let restPart = '';
+
+                // Находим индекс, где начинается совпадение
+                const matchIndex = brandLower.indexOf(inputVal);
+
+                if (matchIndex === 0) {
+                    // Если совпадение в начале
+                    boldPart = brand.substring(0, inputValLength);
+                    restPart = brand.substring(inputValLength);
                 }
+
+                item.innerHTML = `<strong>${boldPart}</strong>${restPart}`;
+
+                item.addEventListener('click', () => {
+                    // Вставляем полное, оригинальное название марки
+                    carModelInput.value = brand + ' ';
+                    autocompleteResults.innerHTML = '';
+                    autocompleteResults.style.display = 'none';
+                    carModelInput.focus();
+                    updateUI();
+                });
+
+                autocompleteResults.appendChild(item);
+            });
+
+            autocompleteResults.style.display = 'block';
+        }
+
+        // --- ФУНКЦИЯ ГЕНЕРАЦИИ ГОДОВ ---
+        function generateYearButtons() {
+            const currentYear = new Date().getFullYear();
+            const startYear = currentYear + 1; // Самый высокий год (первая кнопка)
+            const endYear = 2015;             // Самый низкий год (последняя кнопка)
+
+            // Сброс контейнера перед генерацией
+            yearButtonsContainer.innerHTML = '';
+
+            // Начинаем с самого высокого года и идем вниз
+            for (let year = startYear; year >= endYear; year--) {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.classList.add('choice-button', 'year-range-button');
+                button.dataset.value = year;
+                button.textContent = year;
+
+                // Добавляем класс самой первой кнопке
+                if (year === startYear) {
+                    button.classList.add('first-in-grid');
+                }
+
+                // Добавляем класс самой последней кнопке
+                if (year === endYear) {
+                    button.classList.add('last-in-grid');
+                }
+
+                yearButtonsContainer.appendChild(button);
             }
-            
-            // Защита от удаления +7
-            if (value.length < 2 && value !== '+') { 
-                 value = '+7';
-            } else if (value.length > 2 && !value.startsWith('+7')) {
-                 value = '+7' + value.replace(/\+/g, '').substring(1);
-            }
-            
-            // Ограничиваем длину
-            if (value.length > 12) {
-                value = value.substring(0, 12);
-            }
-            
-            this.value = value;
-            updateUI();
-        });
-    }
-    
-    // ----------------------------------------
-    // УПРАВЛЕНИЕ КНОПКАМИ TELEGRAM 
-    // ----------------------------------------
-    if (Telegram.themeParams) {
-        Telegram.MainButton.hide(); 
-        Telegram.BackButton.hide();
-        // Обработка кнопки "Назад" TWA
-        Telegram.BackButton.onClick(() => {
-            if (currentStep > 1) {
+        }
+
+        // ----------------------------------------
+        // ФУНКЦИЯ МАСКИ ТЕЛЕФОНА (+7)
+        // ----------------------------------------
+        function setupPhoneInput(input) {
+            // Устанавливаем +7, если поле пусто, и предотвращаем его удаление
+            input.addEventListener('focus', function () {
+                if (this.value === '' || this.value === '+') {
+                    this.value = '+7';
+                }
+                // Перемещаем курсор в конец
+                this.setSelectionRange(this.value.length, this.value.length);
+            });
+
+            input.addEventListener('input', function () {
+                let value = this.value.replace(/[^\d+]/g, ''); // Удаляем все, кроме цифр и +
+
+                // Если удалили +7, ставим его обратно
+                if (!value.startsWith('+7')) {
+                    if (value.startsWith('8')) {
+                        value = '+7' + value.substring(1);
+                    } else if (value.startsWith('7')) {
+                        value = '+' + value;
+                    } else if (!value.startsWith('+')) {
+                        value = '+7' + value;
+                    }
+                }
+
+                // Защита от удаления +7
+                if (value.length < 2 && value !== '+') {
+                    value = '+7';
+                } else if (value.length > 2 && !value.startsWith('+7')) {
+                    value = '+7' + value.replace(/\+/g, '').substring(1);
+                }
+
+                // Ограничиваем длину
+                if (value.length > 12) {
+                    value = value.substring(0, 12);
+                }
+
+                this.value = value;
+                updateUI();
+            });
+        }
+
+        // ----------------------------------------
+        // УПРАВЛЕНИЕ КНОПКАМИ TELEGRAM 
+        // ----------------------------------------
+        if (Telegram.themeParams) {
+            Telegram.MainButton.hide();
+            Telegram.BackButton.hide();
+            // Обработка кнопки "Назад" TWA
+            Telegram.BackButton.onClick(() => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateUI();
+                } else {
+                    Telegram.close();
+                }
+            });
+        }
+
+        // ----------------------------------------
+        // ОБРАБОТЧИК НАВИГАЦИИ (НАЗАД/ДАЛЕЕ/ОТПРАВИТЬ)
+        // ----------------------------------------
+
+        function handleNavigation(event) {
+            const button = event.target.closest('.nav-button');
+            if (!button) return;
+
+            const action = button.dataset.action;
+
+            if (action === 'back') {
                 currentStep--;
                 updateUI();
-            } else {
-                Telegram.close();
-            }
-        });
-    }
-    
-    // ----------------------------------------
-    // ОБРАБОТЧИК НАВИГАЦИИ (НАЗАД/ДАЛЕЕ/ОТПРАВИТЬ)
-    // ----------------------------------------
-    
-    function handleNavigation(event) {
-        const button = event.target.closest('.nav-button');
-        if (!button) return;
-        
-        const action = button.dataset.action;
+            } else if (action === 'next') {
+                if (!button.classList.contains('active')) return;
 
-        if (action === 'back') {
-            currentStep--;
-            updateUI();
-        } else if (action === 'next') {
-            if (!button.classList.contains('active')) return;
-
-            if (checkStepValidity()) {
-                currentStep++;
-                updateUI();
-            } else {
-                Telegram.showAlert('Пожалуйста, заполните или выберите нужный пункт.');
-            }
-        } else if (action === 'submit') {
-            submitForm();
-        }
-    }
-
-    document.getElementById('carForm').addEventListener('click', handleNavigation);
-    
-    // ----------------------------------------
-    // ФУНКЦИИ ВОССТАНОВЛЕНИЯ СОСТОЯНИЯ И РЕДАКТИРОВАНИЯ
-    // ----------------------------------------
-
-    // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ: Восстанавливает startYear и endYear из поля #carYear
-    function loadYearRangeState() {
-        const yearValue = document.getElementById('carYear').value.trim();
-        startYear = null;
-        endYear = null;
-
-        if (yearValue) {
-            if (yearValue.includes('-')) {
-                // Диапазон: "2020-2023"
-                const parts = yearValue.split('-').map(s => parseInt(s.trim()));
-                if (!isNaN(parts[0]) && !isNaN(parts[1])) {
-                    startYear = parts[0];
-                    endYear = parts[1];
+                if (checkStepValidity()) {
+                    currentStep++;
+                    updateUI();
+                } else {
+                    Telegram.showAlert('Пожалуйста, заполните или выберите нужный пункт.');
                 }
-            } else {
-                // Одиночный год: "2022"
-                const year = parseInt(yearValue);
-                if (!isNaN(year)) {
-                    startYear = year;
+            } else if (action === 'submit') {
+                submitForm();
+            }
+        }
+
+        document.getElementById('carForm').addEventListener('click', handleNavigation);
+
+        // ----------------------------------------
+        // ФУНКЦИИ ВОССТАНОВЛЕНИЯ СОСТОЯНИЯ И РЕДАКТИРОВАНИЯ
+        // ----------------------------------------
+
+        // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ: Восстанавливает startYear и endYear из поля #carYear
+        function loadYearRangeState() {
+            const yearValue = document.getElementById('carYear').value.trim();
+            startYear = null;
+            endYear = null;
+
+            if (yearValue) {
+                if (yearValue.includes('-')) {
+                    // Диапазон: "2020-2023"
+                    const parts = yearValue.split('-').map(s => parseInt(s.trim()));
+                    if (!isNaN(parts[0]) && !isNaN(parts[1])) {
+                        startYear = parts[0];
+                        endYear = parts[1];
+                    }
+                } else {
+                    // Одиночный год: "2022"
+                    const year = parseInt(yearValue);
+                    if (!isNaN(year)) {
+                        startYear = year;
+                    }
                 }
             }
         }
-    }
 
-    function createReviewField(label, value, step) {
-        const div = document.createElement('div');
-        div.classList.add('review-field');
-        // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Добавлен type="button" для предотвращения сброса формы
-        div.innerHTML = `
+        function createReviewField(label, value, step) {
+            const div = document.createElement('div');
+            div.classList.add('review-field');
+            // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Добавлен type="button" для предотвращения сброса формы
+            div.innerHTML = `
             <span class="review-field-label">${label}</span>
             <span class="review-field-value">
                 ${value}
                 <button type="button" class="review-field-edit" data-step="${step}" onclick="editStep(${step})">✏️</button>
             </span>
         `;
-        return div;
-    }
-    
-    function populateReviewData() {
-        reviewDataContainer.innerHTML = '';
-        const formData = {};
-        document.querySelectorAll('input').forEach(input => {
-            if (input.name && input.value) {
-                formData[input.name] = input.value;
-            }
-        });
-
-        const labelMap = {
-            'Тип авто': 'Тип', 
-            'Марка/Модель': 'Марка и модель', 
-            'Год выпуска': 'Год выпуска', 
-            'Имя': 'Имя', 
-            'Телефон': 'Телефон'
-        };
-
-        for (const key in formData) {
-            const label = labelMap[key] || key;
-            const value = formData[key];
-            
-            let stepForEdit = 0;
-            if (key === 'Тип авто') stepForEdit = 1;
-            else if (key === 'Марка/Модель') stepForEdit = 2;
-            else if (key === 'Год выпуска') stepForEdit = 3;
-            else if (key === 'Имя') stepForEdit = 4;
-            else if (key === 'Телефон') stepForEdit = 5;
-
-            if (stepForEdit > 0) {
-                 reviewDataContainer.appendChild(createReviewField(label, value, stepForEdit));
-            }
+            return div;
         }
-    }
-    
-    // ФУНКЦИЯ РЕДАКТИРОВАНИЯ ШАГА
-    window.editStep = function(step) {
-        currentStep = step;
-        updateUI();
-    }
-    
-    // ----------------------------------------
-    // УПРАВЛЕНИЕ UI
-    // ----------------------------------------
 
-    function updateStepDots() {
-        stepIndicator.innerHTML = '';
-        for (let i = 1; i <= totalSteps - 1; i++) { 
-            const dot = document.createElement('span');
-            dot.classList.add('dot');
-            if (i <= currentStep) {
-                dot.classList.add('active');
-            }
-            stepIndicator.appendChild(dot);
-        }
-    }
-
-    function updateUI() {
-        updateStepDots();
-
-        formSteps.forEach(step => {
-            const stepIndex = parseInt(step.dataset.step);
-            const isCurrent = (stepIndex === currentStep);
-            step.style.display = isCurrent ? 'block' : 'none';
-
-            if (isCurrent) {
-                const nextButton = step.querySelector('.nav-button.next');
-                const backButton = step.querySelector('.nav-button.back');
-                
-                if (backButton) {
-                    backButton.style.display = (currentStep === 1) ? 'none' : 'block';
-                }
-                
-                if (nextButton) {
-                    if (checkStepValidity()) {
-                        nextButton.classList.add('active');
-                    } else {
-                        nextButton.classList.remove('active');
-                    }
-                }
-                
-                // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ ДЛЯ ТЕКУЩЕГО ШАГА
-                if (stepIndex === 1) {
-                    const carType = document.getElementById('carType').value;
-                    document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(btn => {
-                        btn.classList.remove('selected');
-                        if (btn.dataset.value === carType) {
-                            btn.classList.add('selected');
-                        }
-                    });
-                }
-                
-                // ВОССТАНОВЛЕНИЕ ДЛЯ ШАГА 3 (ГОД ВЫПУСКА)
-                if (stepIndex === 3) {
-                    loadYearRangeState();
-                    visualizeYearRange();
-                }
-                
-                if (stepIndex === 5) {
-                    // Повторное применение маски при возврате на шаг 5 (для фокусировки)
-                    setupPhoneInput(document.getElementById('clientPhone'));
-                }
-            }
-        });
-        
-        if (currentStep === totalSteps) { // Шаг 6
-            populateReviewData();
-        }
-        
-        const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-        // Ищем первое видимое поле ввода
-        const firstInput = currentStepElement ? currentStepElement.querySelector('input:not([type="hidden"])') : null;
-
-        if (firstInput) {
-            // Используем preventScroll: true для предотвращения "прыжка" экрана
-            setTimeout(() => {
-                firstInput.focus({ preventScroll: true }); 
-            }, 10); 
-        }
-    }
-    
-    // ----------------------------------------
-    // ПРОВЕРКА ВАЛИДНОСТИ ТЕКУЩЕГО ШАГА
-    // ----------------------------------------
-
-    function checkStepValidity() {
-        switch (currentStep) {
-            case 1: 
-                return !!document.getElementById('carType').value;
-            case 2: 
-                return !!document.getElementById('carModel').value.trim();
-            case 3: 
-                return !!document.getElementById('carYear').value.trim();
-            case 4: 
-                return !!document.getElementById('clientName').value.trim();
-            case 5: 
-                const phoneValue = document.getElementById('clientPhone').value.trim();
-                return phoneValue.length === 12; // Проверяем на полную длину +7 (12 символов)
-            case 6: 
-                return true; 
-            default:
-                return false;
-        }
-    }
-    
-    // --- ВИЗУАЛИЗАЦИЯ ДИАПАЗОНА ГОДОВ ---
-    function visualizeYearRange() {
-        const yearInput = document.getElementById('carYear');
-        const buttons = document.querySelectorAll('.year-range-button');
-        
-        buttons.forEach(btn => {
-            btn.classList.remove('selected', 'in-range');
-        });
-
-        if (startYear && endYear) {
-            const start = Math.min(startYear, endYear);
-            const end = Math.max(startYear, endYear);
-            // Сохраняем значение в скрытом поле
-            yearInput.value = `${start}-${end}`;
-            
-            buttons.forEach(btn => {
-                const year = parseInt(btn.dataset.value);
-                if (year >= start && year <= end) {
-                    btn.classList.add('in-range');
-                }
-                if (year === start || year === end) {
-                    btn.classList.add('selected'); 
-                    btn.classList.remove('in-range'); 
+        function populateReviewData() {
+            reviewDataContainer.innerHTML = '';
+            const formData = {};
+            document.querySelectorAll('input').forEach(input => {
+                if (input.name && input.value) {
+                    formData[input.name] = input.value;
                 }
             });
-        } else if (startYear) {
-            // Сохраняем значение в скрытом поле
-            yearInput.value = startYear;
-            document.querySelector(`.year-range-button[data-value="${startYear}"]`)?.classList.add('selected');
-        } else {
-            yearInput.value = '';
-        }
-        
-        // Обновляем состояние кнопки "ДАЛЕЕ" вручную после визуализации
-        const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-        const nextButton = currentStepElement ? currentStepElement.querySelector('.nav-button.next') : null;
-        if (nextButton) {
-             if (checkStepValidity()) {
-                nextButton.classList.add('active');
-            } else {
-                nextButton.classList.remove('active');
+
+            const labelMap = {
+                'Тип авто': 'Тип',
+                'Марка/Модель': 'Марка и модель',
+                'Год выпуска': 'Год выпуска',
+                'Имя': 'Имя',
+                'Телефон': 'Телефон'
+            };
+
+            for (const key in formData) {
+                const label = labelMap[key] || key;
+                const value = formData[key];
+
+                let stepForEdit = 0;
+                if (key === 'Тип авто') stepForEdit = 1;
+                else if (key === 'Марка/Модель') stepForEdit = 2;
+                else if (key === 'Год выпуска') stepForEdit = 3;
+                else if (key === 'Имя') stepForEdit = 4;
+                else if (key === 'Телефон') stepForEdit = 5;
+
+                if (stepForEdit > 0) {
+                    reviewDataContainer.appendChild(createReviewField(label, value, stepForEdit));
+                }
             }
         }
-    }
-    
-    // ----------------------------------------
-    // ОБРАБОТКА ВЫБОРА И ПОЛЕЙ ВВОДА
-    // ----------------------------------------
 
-    // Шаг 1: Выбор типа авто
-    document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(button => {
-        button.addEventListener('click', function() {
-            document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(btn => btn.classList.remove('selected'));
-            this.classList.add('selected');
-            document.getElementById('carType').value = this.dataset.value;
-            updateUI(); 
-        });
-    });
-
-    // --- ЛОГИКА ВЫБОРА ДИАПАЗОНА ГОДОВ (ШАГ 3) ---
-    function handleYearSelection(event) {
-        const button = event.target.closest('.year-range-button');
-        if (!button) return;
-        
-        const year = parseInt(button.dataset.value);
-
-        if (startYear === null) {
-            startYear = year;
-            endYear = null;
-        } else if (endYear === null) {
-            // Если выбранная дата меньше начальной, меняем их местами
-            if (year < startYear) {
-                endYear = startYear;
-                startYear = year;
-            } else {
-                endYear = year;
-            }
-        } else {
-            // Сбрасываем диапазон, начинаем новый
-            startYear = year;
-            endYear = null;
+        // ФУНКЦИЯ РЕДАКТИРОВАНИЯ ШАГА
+        window.editStep = function (step) {
+            currentStep = step;
+            updateUI();
         }
-        
-        visualizeYearRange();
-    }
-    
-    yearButtonsContainer.addEventListener('click', handleYearSelection);
 
+        // ----------------------------------------
+        // УПРАВЛЕНИЕ UI
+        // ----------------------------------------
 
-    // Обработчики для полей ввода для динамической проверки
-    document.querySelectorAll('input:not([type="hidden"])').forEach(input => {
-        input.addEventListener('input', () => {
-            // Обновляем UI для активации кнопки "ДАЛЕЕ"
-            if (currentStep !== 3) {
+        function updateStepDots() {
+            stepIndicator.innerHTML = '';
+            for (let i = 1; i <= totalSteps - 1; i++) {
+                const dot = document.createElement('span');
+                dot.classList.add('dot');
+                if (i <= currentStep) {
+                    dot.classList.add('active');
+                }
+                stepIndicator.appendChild(dot);
+            }
+        }
+
+        function updateUI() {
+            updateStepDots();
+
+            formSteps.forEach(step => {
+                const stepIndex = parseInt(step.dataset.step);
+                const isCurrent = (stepIndex === currentStep);
+                step.style.display = isCurrent ? 'block' : 'none';
+
+                if (isCurrent) {
+                    const nextButton = step.querySelector('.nav-button.next');
+                    const backButton = step.querySelector('.nav-button.back');
+
+                    if (backButton) {
+                        backButton.style.display = (currentStep === 1) ? 'none' : 'block';
+                    }
+
+                    if (nextButton) {
+                        if (checkStepValidity()) {
+                            nextButton.classList.add('active');
+                        } else {
+                            nextButton.classList.remove('active');
+                        }
+                    }
+
+                    // ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ ДЛЯ ТЕКУЩЕГО ШАГА
+                    if (stepIndex === 1) {
+                        const carType = document.getElementById('carType').value;
+                        document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(btn => {
+                            btn.classList.remove('selected');
+                            if (btn.dataset.value === carType) {
+                                btn.classList.add('selected');
+                            }
+                        });
+                    }
+
+                    // ВОССТАНОВЛЕНИЕ ДЛЯ ШАГА 3 (ГОД ВЫПУСКА)
+                    if (stepIndex === 3) {
+                        loadYearRangeState();
+                        visualizeYearRange();
+                    }
+
+                    if (stepIndex === 5) {
+                        // Повторное применение маски при возврате на шаг 5 (для фокусировки)
+                        setupPhoneInput(document.getElementById('clientPhone'));
+                    }
+                }
+            });
+
+            if (currentStep === totalSteps) { // Шаг 6
+                populateReviewData();
+            }
+
+            const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+            // Ищем первое видимое поле ввода
+            const firstInput = currentStepElement ? currentStepElement.querySelector('input:not([type="hidden"])') : null;
+
+            if (firstInput) {
+                // Используем preventScroll: true для предотвращения "прыжка" экрана
+                setTimeout(() => {
+                    firstInput.focus({ preventScroll: true });
+                }, 10);
+            }
+        }
+
+        // ----------------------------------------
+        // ПРОВЕРКА ВАЛИДНОСТИ ТЕКУЩЕГО ШАГА
+        // ----------------------------------------
+
+        function checkStepValidity() {
+            switch (currentStep) {
+                case 1:
+                    return !!document.getElementById('carType').value;
+                case 2:
+                    return !!document.getElementById('carModel').value.trim();
+                case 3:
+                    return !!document.getElementById('carYear').value.trim();
+                case 4:
+                    return !!document.getElementById('clientName').value.trim();
+                case 5:
+                    const phoneValue = document.getElementById('clientPhone').value.trim();
+                    return phoneValue.length === 12; // Проверяем на полную длину +7 (12 символов)
+                case 6:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // --- ВИЗУАЛИЗАЦИЯ ДИАПАЗОНА ГОДОВ ---
+        function visualizeYearRange() {
+            const yearInput = document.getElementById('carYear');
+            const buttons = document.querySelectorAll('.year-range-button');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('selected', 'in-range');
+            });
+
+            if (startYear && endYear) {
+                const start = Math.min(startYear, endYear);
+                const end = Math.max(startYear, endYear);
+                // Сохраняем значение в скрытом поле
+                yearInput.value = `${start}-${end}`;
+
+                buttons.forEach(btn => {
+                    const year = parseInt(btn.dataset.value);
+                    if (year >= start && year <= end) {
+                        btn.classList.add('in-range');
+                    }
+                    if (year === start || year === end) {
+                        btn.classList.add('selected');
+                        btn.classList.remove('in-range');
+                    }
+                });
+            } else if (startYear) {
+                // Сохраняем значение в скрытом поле
+                yearInput.value = startYear;
+                document.querySelector(`.year-range-button[data-value="${startYear}"]`)?.classList.add('selected');
+            } else {
+                yearInput.value = '';
+            }
+
+            // Обновляем состояние кнопки "ДАЛЕЕ" вручную после визуализации
+            const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+            const nextButton = currentStepElement ? currentStepElement.querySelector('.nav-button.next') : null;
+            if (nextButton) {
+                if (checkStepValidity()) {
+                    nextButton.classList.add('active');
+                } else {
+                    nextButton.classList.remove('active');
+                }
+            }
+        }
+
+        // ----------------------------------------
+        // ОБРАБОТКА ВЫБОРА И ПОЛЕЙ ВВОДА
+        // ----------------------------------------
+
+        // Шаг 1: Выбор типа авто
+        document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(button => {
+            button.addEventListener('click', function () {
+                document.querySelectorAll('.form-step[data-step="1"] .choice-button').forEach(btn => btn.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('carType').value = this.dataset.value;
                 updateUI();
-            }
+            });
         });
-    });
-    
-    // Отдельный обработчик для автоподсказки
-    carModelInput.addEventListener('input', () => {
-        updateAutocomplete();
-        updateUI(); 
-    });
-    
-    // Обработчики для корректной работы автоподсказки на мобильных
-    carModelInput.addEventListener('blur', () => {
-        // Небольшая задержка, чтобы клик по подсказке успел сработать
-        setTimeout(() => {
-            autocompleteResults.style.display = 'none';
-        }, 150);
-    });
 
-    carModelInput.addEventListener('focus', () => {
-        updateAutocomplete(); // Показываем список при фокусе, если есть текст
-    });
+        // --- ЛОГИКА ВЫБОРА ДИАПАЗОНА ГОДОВ (ШАГ 3) ---
+        function handleYearSelection(event) {
+            const button = event.target.closest('.year-range-button');
+            if (!button) return;
 
-    
-    // ----------------------------------------
-    // ОТПРАВКА ФОРМЫ
-    // ----------------------------------------
+            const year = parseInt(button.dataset.value);
 
-    function submitForm() {
-        const finalButton = document.getElementById('finalSubmitButton');
-        if (finalButton.textContent === 'ОТПРАВЛЕНО') return; 
-        
-        const formData = {};
-        document.querySelectorAll('input').forEach(input => {
-            if (input.name && input.value) {
-                formData[input.name] = input.value;
+            if (startYear === null) {
+                startYear = year;
+                endYear = null;
+            } else if (endYear === null) {
+                // Если выбранная дата меньше начальной, меняем их местами
+                if (year < startYear) {
+                    endYear = startYear;
+                    startYear = year;
+                } else {
+                    endYear = year;
+                }
+            } else {
+                // Сбрасываем диапазон, начинаем новый
+                startYear = year;
+                endYear = null;
             }
-        });
-        
-        try {
-            Telegram.sendData(JSON.stringify(formData));
-            
-            finalButton.textContent = 'ОТПРАВЛЕНО';
-            finalButton.classList.remove('active');
-            
-            reviewDataContainer.innerHTML = '<h3>✅ Заявка успешно отправлена!</h3><p>Спасибо за ваш выбор. Скоро с вами свяжется менеджер.</p>';
-            
-        } catch (error) {
-            Telegram.showAlert('Произошла ошибка при отправке данных: ' + error.message);
+
+            visualizeYearRange();
         }
-    }
 
-    // Инициализация
-    generateYearButtons(); 
-    setupPhoneInput(document.getElementById('clientPhone')); // <-- Инициализация маски +7
-    updateUI(); 
-</script>
+        yearButtonsContainer.addEventListener('click', handleYearSelection);
+
+
+        // Обработчики для полей ввода для динамической проверки
+        document.querySelectorAll('input:not([type="hidden"])').forEach(input => {
+            input.addEventListener('input', () => {
+                // Обновляем UI для активации кнопки "ДАЛЕЕ"
+                if (currentStep !== 3) {
+                    updateUI();
+                }
+            });
+        });
+
+        // Отдельный обработчик для автоподсказки
+        carModelInput.addEventListener('input', () => {
+            updateAutocomplete();
+            updateUI();
+        });
+
+        // Обработчики для корректной работы автоподсказки на мобильных
+        carModelInput.addEventListener('blur', () => {
+            // Небольшая задержка, чтобы клик по подсказке успел сработать
+            setTimeout(() => {
+                autocompleteResults.style.display = 'none';
+            }, 150);
+        });
+
+        carModelInput.addEventListener('focus', () => {
+            updateAutocomplete(); // Показываем список при фокусе, если есть текст
+        });
+
+
+        // ----------------------------------------
+        // ОТПРАВКА ФОРМЫ
+        // ----------------------------------------
+
+        function submitForm() {
+            const finalButton = document.getElementById('finalSubmitButton');
+            if (finalButton.textContent === 'ОТПРАВЛЕНО') return;
+
+            const formData = {};
+            document.querySelectorAll('input').forEach(input => {
+                if (input.name && input.value) {
+                    formData[input.name] = input.value;
+                }
+            });
+
+            try {
+                Telegram.sendData(JSON.stringify(formData));
+
+                finalButton.textContent = 'ОТПРАВЛЕНО';
+                finalButton.classList.remove('active');
+
+                reviewDataContainer.innerHTML = '<h3>✅ Заявка успешно отправлена!</h3><p>Спасибо за ваш выбор. Скоро с вами свяжется менеджер.</p>';
+
+            } catch (error) {
+                Telegram.showAlert('Произошла ошибка при отправке данных: ' + error.message);
+            }
+        }
+
+        // Инициализация
+        generateYearButtons();
+        setupPhoneInput(document.getElementById('clientPhone')); // <-- Инициализация маски +7
+        updateUI(); 
+    </script>
 
 </body>
+
 </html>

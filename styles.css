@@ -30,6 +30,8 @@ body {
     max-width: 600px;
     margin: auto;
     padding: 0 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
 /* ======================================= */
@@ -89,21 +91,42 @@ h2 {
 }
 
 /* ======================================= */
-/* 5. ПОЛЯ ВВОДА (INPUTS) */
+/* 5. ПОЛЯ ВВОДА (INPUTS) - НЕОНОВОЕ МЕРЦАНИЕ */
 /* ======================================= */
-input[type="text"], input[type="tel"], input[type="number"] {
+input[type="text"], 
+input[type="tel"], 
+input[type="number"],
+input[type="email"], 
+textarea 
+{
     width: 100%;
     padding: 15px 12px;
     margin-top: 5px;
+    margin-bottom: 25px; 
+    
     box-sizing: border-box;
-    border: 1px solid var(--accent-color); 
-    border-radius: 10px;
+    /* Базовая, слегка заметная рамка */
+    border: 1px solid var(--border-color); 
+    border-radius: 10px; 
+    
     font-size: 1.1em;
     background-color: var(--input-bg); 
     color: var(--text-color);
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    
+    /* Начальная тень для "выключенного" состояния */
+    box-shadow: 0 0 0 0 rgba(0, 99, 199, 0); 
+    
+    /* Плавный переход для цвета рамки и тени */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; 
+    
     -moz-appearance: textfield; 
+}
+
+/* Стили для textarea */
+textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -114,10 +137,19 @@ input::placeholder {
     color: var(--hint-color); 
 }
 
-/* Эффект при фокусе */
-input:focus {
+/* Эффект при ФОКУСЕ: Активируем НЕОНОВОЕ СВЕЧЕНИЕ */
+input:focus, 
+textarea:focus {
+    /* Рамка становится акцентного цвета */
     border-color: var(--accent-light);
-    box-shadow: 0 0 5px rgba(0, 99, 199, 0.7);
+    
+    /* Основной неоновый ореол */
+    box-shadow: 
+        0 0 10px var(--accent-light), 
+        0 0 20px var(--accent-color);
+    
+    /* Активируем мерцание */
+    animation: neon-flicker 1.5s infinite alternate; 
 }
 
 /* ======================================= */
@@ -130,10 +162,11 @@ input:focus {
     margin-top: 20px;
 }
 
+/* Базовый стиль: ПОЛНОЕ скругление 15px */
 .choice-button {
     padding: 12px 10px;
     border: 2px solid var(--input-bg); 
-    border-radius: 15px; 
+    border-radius: 15px; /* <--- БАЗОВОЕ ПОЛНОЕ СКРУГЛЕНИЕ для ВСЕХ, кроме крайних */
     background-color: var(--input-bg);
     color: var(--text-color);
     font-size: 1em;
@@ -150,7 +183,24 @@ input:focus {
     box-shadow: 0 0 8px rgba(0, 99, 199, 0.7);
 }
 
-/* Стиль для кнопок внутри диапазона */
+
+/* --- КОРРЕКТНЫЕ УНИКАЛЬНЫЕ СТИЛИ ДЛЯ КРАЙНИХ КНОПОК --- */
+/* Используем короткую запись для гарантированного переопределения */
+
+/* 1. Первая кнопка (САМЫЙ ПЕРВЫЙ ГОД) */
+.choice-button.first-in-grid {
+    /* [верх-лево] [верх-право] [низ-право] [низ-лево] */
+    border-radius: 15px 0 0 0 !important; 
+}
+
+/* 2. Последняя кнопка (САМЫЙ ПОСЛЕДНИЙ ГОД) */
+.choice-button.last-in-grid {
+    /* [верх-лево] [верх-право] [низ-право] [низ-лево] */
+    border-radius: 0 0 15px 0 !important; 
+}
+
+
+/* Стиль для кнопок внутри диапазона (сохранен из вашего кода) */
 .choice-button.in-range {
     background-color: #333; 
     border-color: #333;
@@ -325,4 +375,101 @@ body::before {
     background-position: center;  
     
     z-index: -1; 
+}
+/* ======================================= */
+/* 12. СТИЛИ ДЛЯ FAQ-АККОРДЕОНА */
+/* ======================================= */
+
+.faq-item {
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 99, 199, 0.2); 
+    border-radius: 10px;
+    overflow: hidden; 
+}
+
+.faq-question {
+    padding: 15px 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color);
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.faq-question:hover {
+    color: var(--accent-light);
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    padding: 0 10px;
+    font-size: 0.95em;
+    color: var(--hint-color);
+    background-color: rgba(0, 0, 0, 0.1); 
+}
+
+.faq-answer p {
+    margin-top: 0;
+    padding-bottom: 15px;
+    line-height: 1.5;
+}
+
+/* Стили для маркеров */
+.faq-answer ul {
+    padding-left: 20px;
+    padding-bottom: 15px;
+    list-style-type: none; 
+    margin-top: 0;
+}
+
+.faq-answer ul li {
+    margin-bottom: 8px;
+    position: relative;
+    padding-left: 15px;
+}
+
+.faq-answer ul li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--accent-light);
+    font-weight: bold;
+}
+
+/* Стиль для активного аккордеона */
+.faq-item.active .faq-answer {
+    max-height: 1000px; 
+    transition: max-height 0.5s ease-in;
+}
+
+.faq-item.active .faq-question {
+    color: var(--accent-light);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Иконка-стрелка: УЛУЧШЕНИЕ СТИЛЯ */
+.faq-icon {
+    /* Меняем '⌄' на SVG-стрелку для лучшего вида */
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    /* Используем mask/background для создания аккуратной иконки */
+    background-color: var(--accent-light);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m19 9l-7 7l-7-7'/%3E%3C/svg%3E") no-repeat 50% 50%;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m19 9l-7 7l-7-7'/%3E%3C/svg%3E") no-repeat 50% 50%;
+    
+    transform: rotate(0deg);
+    transition: transform 0.3s;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(-180deg);
 }
