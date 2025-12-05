@@ -84,6 +84,19 @@
 <script>
     const Telegram = window.Telegram.WebApp;
     Telegram.ready();
+    // --- ФИКСАЦИЯ ВЫСОТЫ VIEWPORT (РЕШЕНИЕ ПРОБЛЕМЫ С КЛАВИАТУРОЙ) ---
+function fixViewportHeight() {
+    // Получаем фактическую высоту видимой области окна
+    let vh = window.innerHeight * 0.01;
+    // Устанавливаем эту высоту как пользовательское CSS-свойство
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+// Вызываем при загрузке
+fixViewportHeight();
+// Вызываем при изменении размера окна (например, при повороте или выезде клавиатуры)
+window.addEventListener('resize', fixViewportHeight);
+// -----------------------------------------------------------------
     Telegram.expand(); 
     Telegram.BackButton.show(); 
 

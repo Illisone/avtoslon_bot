@@ -23,7 +23,9 @@ body {
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
     position: relative; 
-    min-height: 100vh;
+    min-height: 100%;
+    scrollbar-width: none; /* Убираем скроллбар */
+    -ms-overflow-style: none;
 }
 
 .container {
@@ -541,4 +543,14 @@ body::before {
     to {
         transform: rotate(360deg);
     }
+}
+/* ======================================= */
+/* 15. СКРЫТИЕ ПОЛОСЫ ПРОКРУТКИ */
+/* ======================================= */
+
+/* Для браузеров WebKit (Chrome, Safari, Telegram App) */
+body::-webkit-scrollbar {
+    display: none; /* Полностью скрываем скроллбар */
+    width: 0;      /* Дополнительно убираем ширину */
+    height: 0;
 }
