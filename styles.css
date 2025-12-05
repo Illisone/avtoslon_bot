@@ -561,5 +561,51 @@ body::before {
 }
 
 /* ======================================= */
-/* 15. СКРЫТИЕ ПОЛОСЫ ПРОКРУТКИ */
+/* 15. СТИЛИ ДЛЯ КАРТОЧЕК МЕНЕДЖЕРОВ */
 /* ======================================= */
+.contact-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Используем ваши переменные */
+    background-color: var(--card-bg-blur);
+    backdrop-filter: blur(8px);
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+/* Скрываем фото (если оно было) */
+.contact-photo {
+    display: none; 
+}
+
+.contact-name {
+    margin: 0 0 5px 0;
+    color: var(--text-color);
+}
+
+.contact-role {
+    color: var(--hint-color);
+    font-size: 0.9em;
+    margin-bottom: 15px;
+}
+
+.contact-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    /* Используем ваши переменные */
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+.contact-button:hover {
+    background-color: var(--accent-light);
+}
