@@ -377,14 +377,23 @@ body::before {
     z-index: -1; 
 }
 /* ======================================= */
-/* 12. СТИЛИ ДЛЯ FAQ-АККОРДЕОНА */
+/* 12. СТИЛИ ДЛЯ FAQ-АККОРДЕОНА (КАРТОЧКИ) */
 /* ======================================= */
 
 .faq-item {
-    margin-bottom: 15px;
-    border-bottom: 1px solid rgba(0, 99, 199, 0.2); 
-    border-radius: 10px;
+    /* Применяем стили как у .card */
+    background-color: var(--card-bg-blur); 
+    backdrop-filter: blur(10px);          
+    -webkit-backdrop-filter: blur(10px);  
+    
+    border-radius: 20px; /* Немного меньше, чем у основной карточки */
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Более мягкая тень */
+    border: 1px solid rgba(255, 255, 255, 0.1); 
     overflow: hidden; 
+    
+    /* Убираем старую границу */
+    border-bottom: none; 
 }
 
 .faq-question {
@@ -401,7 +410,8 @@ body::before {
 
 .faq-question:hover {
     color: var(--accent-light);
-    background-color: rgba(0, 0, 0, 0.1);
+    /* При наведении делаем фон чуть темнее */
+    background-color: rgba(0, 0, 0, 0.15);
 }
 
 .faq-answer {
@@ -411,16 +421,22 @@ body::before {
     padding: 0 10px;
     font-size: 0.95em;
     color: var(--hint-color);
-    background-color: rgba(0, 0, 0, 0.1); 
+    /* Фон для ответа должен быть прозрачным или очень темным, чтобы не перебивать подложку */
+    background-color: transparent; 
 }
 
 .faq-answer p {
     margin-top: 0;
     padding-bottom: 15px;
     line-height: 1.5;
+    /* Добавляем разделитель сверху для ответа */
+    border-top: 1px solid rgba(255, 255, 255, 0.05); 
+    padding-top: 15px;
 }
 
 /* Стили для маркеров */
+/* ... (остальной код для ul, li, ::before остается без изменений) ... */
+
 .faq-answer ul {
     padding-left: 20px;
     padding-bottom: 15px;
@@ -450,18 +466,18 @@ body::before {
 
 .faq-item.active .faq-question {
     color: var(--accent-light);
-    background-color: rgba(0, 0, 0, 0.2);
+    /* Убираем лишний фон, чтобы подложка была видна */
+    background-color: transparent; 
 }
 
-/* Иконка-стрелка: УЛУЧШЕНИЕ СТИЛЯ */
+/* Иконка-стрелка */
+/* ... (остальной код для .faq-icon остается без изменений) ... */
 .faq-icon {
-    /* Меняем '⌄' на SVG-стрелку для лучшего вида */
     width: 20px;
     height: 20px;
     margin-left: 10px;
     display: inline-block;
     vertical-align: middle;
-    /* Используем mask/background для создания аккуратной иконки */
     background-color: var(--accent-light);
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m19 9l-7 7l-7-7'/%3E%3C/svg%3E") no-repeat 50% 50%;
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m19 9l-7 7l-7-7'/%3E%3C/svg%3E") no-repeat 50% 50%;
