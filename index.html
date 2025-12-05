@@ -670,17 +670,36 @@
         generateYearButtons();
         setupPhoneInput(document.getElementById('clientPhone')); // <-- Инициализация маски +7
         updateUI(); 
-        window.addEventListener('load', () => {
+        // ----------------------------------------
+// ЛОГИКА ПРЕДЗАГРУЗЧИКА (PRELOADER)
+// ----------------------------------------
+
+// Фиксируем время, когда начал выполняться скрипт
+const startTime = Date.now();
+const MINIMUM_DISPLAY_TIME = 2000; // Минимум 2 секунды (2000 мс)
+
+// Скрытие прелоадера после полной загрузки страницы
+window.addEventListener('load', () => {
     const preloader = document.getElementById('preloader');
-    if (preloader) {
-        // Добавляем класс, который плавно скрывает элемент
+    if (!preloader) return;
+    
+    // 1. Вычисляем, сколько времени прошло с момента старта
+    const elapsedTime = Date.now() - startTime;
+    
+    // 2. Вычисляем, сколько времени осталось ждать (или 0, если уже прошло > 2 сек)
+    const remainingTime = Math.max(0, MINIMUM_DISPLAY_TIME - elapsedTime);
+
+    // 3. Устанавливаем таймер на оставшееся время
+    setTimeout(() => {
+        // Запускаем плавное исчезновение (CSS transition)
         preloader.classList.add('hidden');
         
-        // Удаляем элемент из DOM через 500мс, чтобы освободить память
+        // Полностью удаляем элемент из DOM после завершения CSS-перехода (0.5 сек)
         setTimeout(() => {
             preloader.remove();
         }, 500); 
-    }
+        
+    }, remainingTime); // Ждём оставшееся время
 });
     </script>
 

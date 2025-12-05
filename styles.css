@@ -497,16 +497,14 @@ body::before {
     top: 0;
     left: 0;
     width: 100%;
-    /* Используем 100% вместо 100vh для лучшей совместимости с Telegram App */
     height: 100%; 
-    background-color: var(--main-bg); /* Темный фон, чтобы скрыть загрузку */
-    z-index: 9999; /* Выше всего */
+    background-color: var(--main-bg); 
+    z-index: 10000; 
     display: flex;
     justify-content: center;
     align-items: center;
     opacity: 1;
     visibility: visible;
-    /* Плавное исчезновение */
     transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
@@ -515,14 +513,25 @@ body::before {
     visibility: hidden;
 }
 
-/* Стили для вращающегося спиннера */
+/* --- НОВЫЙ СТИЛЬ СПИННЕРА (ДВОЙНОЕ КОЛЬЦО) --- */
 .loader {
-    width: 50px;
-    height: 50px;
-    border: 5px solid var(--border-color);
-    border-top-color: var(--accent-light); /* Акцентный цвет для анимации */
+    width: 60px; /* Немного увеличим размер */
+    height: 60px;
+    
+    /* Базовая граница (фоновая, менее заметная) */
+    border: 6px solid rgba(255, 255, 255, 0.1); 
+    
+    /* Анимированная граница акцентного цвета */
+    border-top-color: var(--accent-light); 
+    border-right-color: var(--accent-color); /* Добавляем второй цвет для градиента */
+    
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    
+    /* Добавляем легкую тень, имитирующую свечение */
+    box-shadow: 0 0 15px var(--accent-light); 
+    
+    /* Запускаем анимацию */
+    animation: spin 0.8s linear infinite; /* Ускорим анимацию для динамики */
 }
 
 /* Анимация вращения */
