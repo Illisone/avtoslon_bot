@@ -22,36 +22,17 @@ body {
     -ms-overflow-style: none;
 }
 
-
-
-/* ======================================= */
-/* 0. ФИКСАЦИЯ HTML (НОВЫЙ БЛОК) */
-/* ======================================= */
-html {
-    /* Фиксируем высоту по JS-переменной и запрещаем скролл на корневом уровне */
-    height: calc(var(--app-vh, 1vh) * 100); 
-    overflow: hidden; 
-    
-    /* Дополнительная мера: убираем лишние отступы */
-    margin: 0;
-    padding: 0;
+body::-webkit-scrollbar {
+    display: none;
+    width: 0;
 }
+
 .container {
-    .container {
     max-width: 600px;
     margin: auto;
     padding: 0 20px;
-    
-    /* ФИКС: Теперь контейнер занимает всю высоту body */
-    height: 100%; 
-    
-    /* ФИКС: Разрешаем прокрутку только внутри контейнера */
-    overflow-y: auto; 
-    -webkit-overflow-scrolling: touch; /* Для плавности на iOS */
-    
+    min-height: calc(var(--app-vh, 1vh) * 100); 
     box-sizing: border-box;
-}
-
 }
 
 .header {
@@ -376,22 +357,25 @@ textarea:focus {
 /* ======================================= */
 body::before {
     content: '';
-    
-    position: fixed; 
+
+    /* 1. ФИКСИРУЕМ ПОЗИЦИЮ */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    
-    /* КЛЮЧЕВОЙ ФИКС: ИСПОЛЬЗУЕМ ПЕРЕМЕННУЮ JS */
-    height: calc(var(--app-vh, 1vh) * 100); 
-    
-    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%), 
-                url('./background.png');
+
+    /* 2. КЛЮЧЕВОЙ ФИКС: ИСПОЛЬЗУЕМ ПЕРЕМЕННУЮ JS */
+    /* Теперь height = 100 * (1% от исходной высоты экрана) */
+    height: calc(var(--app-vh, 1vh) * 100);
+
+    /* 3. КОНСОЛИДИРОВАННЫЙ ФОН */
+    background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%),
+        url('./background.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    
-    z-index: -1; 
+
+    z-index: -1;
 }
 
 /* ======================================= */
