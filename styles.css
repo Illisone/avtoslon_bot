@@ -1,15 +1,15 @@
 :root {
     /* ======================================= */
-    /* 1. ПАЛИТРА ЦВЕТОВ (ТЕМНАЯ ТЕМА С СИНИМ АКЦЕНТОМ) */
+    /* 1. ПАЛИТРА ЦВЕТОВ */
     /* ======================================= */
-    --main-bg: #0D0D0D;       /* Основной фон (Глубокий черный/темный) */
-    --card-bg: #1A1A1A;       /* Фон для карточек (Мягкий темный) */
-    --accent-color: #00448a;  /* Ваш основной синий акцент */
-    --accent-light: #0063c7;  /* Светлый синий для градиентов */
-    --text-color: #EAEAEA;    /* Цвет основного текста (светлый) */
-    --hint-color: #999;       /* Цвет подсказок */
-    --input-bg: #282828;      /* Фон полей ввода и неактивных кнопок */
-    --border-color: #444;     /* Цвет границы (темный) */
+    --main-bg: #0D0D0D;       
+    --card-bg-blur: rgba(26, 26, 26, 0.75); /* Полупрозрачный фон для стекла */
+    --accent-color: #00448a;  
+    --accent-light: #0063c7;  
+    --text-color: #EAEAEA;    
+    --hint-color: #999;       
+    --input-bg: #282828;      
+    --border-color: #444;     
 }
 
 /* ======================================= */
@@ -22,8 +22,6 @@ body {
     background-color: var(--main-bg); 
     color: var(--text-color);
     transition: background-color 0.3s, color 0.3s;
-    
-    /* === КРИТИЧЕСКИЕ ИЗМЕНЕНИЯ ДЛЯ СТАБИЛЬНОСТИ ФОНА === */
     position: relative; 
     min-height: 100vh;
 }
@@ -59,16 +57,22 @@ body {
 }
 
 /* ======================================= */
-/* 4. КАРТОЧКИ И ЗАГОЛОВКИ ШАГОВ */
+/* 4. КАРТОЧКИ И ЗАГОЛОВКИ ШАГОВ (Glassmorphism) */
 /* ======================================= */
 .card {
-    background-color: var(--card-bg);
+    /* --- КРИТИЧЕСКИЕ ИЗМЕНЕНИЯ ДЛЯ ЭФФЕКТА СТЕКЛА --- */
+    background-color: var(--card-bg-blur); /* Полупрозрачный фон */
+    backdrop-filter: blur(10px);          /* Размытие фона за карточкой */
+    -webkit-backdrop-filter: blur(10px);  /* Поддержка Safari */
+    /* ------------------------------------------------ */
+
     border-radius: 25px; 
     padding: 20px;
     margin-bottom: 30px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.6), 0 0 5px rgba(0, 0, 0, 0.4);
     position: relative;
     z-index: 1; 
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Легкая белая рамка */
 }
 
 h2 {
@@ -301,25 +305,21 @@ input:focus {
 /* ======================================= */
 body::before {
     content: '';
-    /* Используем fixed для устранения "пляски" на мобильных/TWA */
     position: fixed; 
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     
-    /* === НОВАЯ ССЫЛКА НА КАРТИНКУ === */
-    /* Используем новую ссылку на изображение */
+    /* === ССЫЛКА НА КАРТИНКУ === */
     background-image: url('https://i.ibb.co/sd0MFSTH/1-Nero-AI-Image-Upscaler-Photo-Face.png'); 
     background-size: cover;          
     background-position: center;     
     background-repeat: no-repeat;
     
-    /* Затем градиент-оверлей поверх изображения */
-    background-blend-mode: multiply; /* Смешивает изображение и градиент */
-    background-color: rgba(0, 0, 0, 0.7); /* Добавляет базовую темноту */
+    background-blend-mode: multiply; 
+    background-color: rgba(0, 0, 0, 0.7); 
     
-    /* Добавляем градиент для смягчения центра, используя новую ссылку */
     background: radial-gradient(circle at center, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%), 
                 url('https://i.ibb.co/sd0MFSTH/1-Nero-AI-Image-Upscaler-Photo-Face.png');
     background-size: cover;          
