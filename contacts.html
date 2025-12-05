@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Наши Менеджеры</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+    
+    <div class="container" style="padding-top: 20px;">
+        <header class="header">
+            <h1 class="page-title">Наши Менеджеры</h1>
+            <p style="color: var(--hint-color); text-align: center;">Выберите, кто поможет вам с подбором авто.</p>
+        </header>
+
+        <div id="contact-list" style="margin-top: 20px;">
+            
+            <div class="contact-card">
+                <div class="contact-info">
+                    <h3 class="contact-name">Дмитрий</h3>
+                    <p class="contact-role">Ведущий специалист по импорту из Кореи</p>
+                </div>
+                <a href="https://t.me/K_Dim17" target="_blank" class="contact-button">
+                    ✍️ Написать в Telegram
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-info">
+                    <h3 class="contact-name">Александр</h3>
+                    <p class="contact-role">Эксперт по автомобилям из Китая и Японии</p>
+                </div>
+                <a href="https://t.me/Another_Manager_Username" target="_blank" class="contact-button">
+                    ✍️ Написать в Telegram
+                </a>
+            </div>
+            
+            </div>
+    </div>
+
+    <script>
+        // Стандартный код для Mini App
+        Telegram.WebApp.ready();
+        Telegram.BackButton.show();
+        
+        Telegram.BackButton.onClick(() => {
+            Telegram.WebApp.close();
+        });
+        
+        // --- КОД ПРЕДЗАГРУЗЧИКА ---
+        const startTime = Date.now();
+        const MINIMUM_DISPLAY_TIME = 2000;
+
+        window.addEventListener("load", () => {
+            const preloader = document.getElementById("preloader");
+            if (!preloader) return;
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, MINIMUM_DISPLAY_TIME - elapsedTime);
+
+            setTimeout(() => {
+                preloader.classList.add("hidden");
+                setTimeout(() => {
+                    preloader.remove();
+                }, 500);
+            }, remainingTime);
+        });
+        // --------------------------
+    </script>
+</body>
+
+</html>
