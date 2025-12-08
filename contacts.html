@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        /* Общий стиль для всех кнопок */
         .contact-button {
             display: block;
             width: 100%;
@@ -18,16 +19,29 @@
             border-radius: 8px;
             font-weight: bold;
             transition: background-color 0.2s ease;
-            text-align: center; /* Центрируем текст внутри кнопки */
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            box-sizing: border-box; 
         }
         .contact-button:hover {
             background-color: var(--accent-light);
         }
-        /* Новый стиль для кнопки "Написать нам" */
+        /* Стиль для кнопки "Написать нам" */
         .main-contact-button {
-            margin-bottom: 25px; /* Отступ от менеджеров */
-            font-size: 1.1em;
-            padding: 15px;
+            margin-bottom: 25px; 
+            font-size: 1em; 
+            padding: 12px 20px; 
+        }
+
+        /* Стиль для кнопок "Позвонить" */
+        .contact-card .contact-button {
+            margin-top: 10px;
+        }
+        
+        /* Убираем лишний отступ снизу у имени */
+        .contact-name {
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -46,45 +60,59 @@
         <div id="contact-list" style="margin-top: 20px;">
             
             <a href="https://t.me/K_Dim17" target="_blank" class="contact-button main-contact-button">
-                ✍️ Написать нам (Telegram)
+                Написать нам (Telegram)
             </a>
 
 
             <div class="contact-card">
                 <div class="contact-info">
                     <h3 class="contact-name">Вадим</h3>
-                    <p class="contact-role">📞 +7 923 222-00-01</p> 
                 </div>
-                <a href="tel:+79232220001" class="contact-button">
-                    📞 Позвонить
-                </a>
+                <button type="button" onclick="openPhoneCall('+79232220001')" class="contact-button">
+                    Позвонить
+                </button>
             </div>
 
             <div class="contact-card">
                 <div class="contact-info">
                     <h3 class="contact-name">Алексей</h3>
-                    <p class="contact-role">📞 +7 913 787-12-32</p>
                 </div>
-                <a href="tel:+79137871232" class="contact-button">
-                    📞 Позвонить
-                </a>
+                <button type="button" onclick="openPhoneCall('+79137871232')" class="contact-button">
+                    Позвонить
+                </button>
             </div>
             
             <div class="contact-card">
                 <div class="contact-info">
                     <h3 class="contact-name">Николай</h3>
-                    <p class="contact-role">📞 +7 913 917-66-44</p>
                 </div>
-                <a href="tel:+79139176644" class="contact-button">
-                    📞 Позвонить
-                </a>
+                <button type="button" onclick="openPhoneCall('+79139176644')" class="contact-button">
+                    Позвонить
+                </button>
             </div>
 
         </div>
     </div>
 
     <script>
-        // ГЛАВНОЕ ИСПРАВЛЕНИЕ: Вызываем ready() немедленно
+        // Функция для принудительного открытия ссылки tel: через внешний браузер/приложение
+        function openPhoneCall(phoneNumber) {
+            // Удаляем символ '+' из номера
+            const cleanNumber = phoneNumber.replace('+', ''); 
+            const telUrl = 'tel:' + cleanNumber; 
+            
+            if (window.Telegram && Telegram.WebApp) {
+                // ДИАГНОСТИКА: Показываем сообщение, чтобы убедиться, что код выполняется
+                Telegram.WebApp.showAlert('Запуск звонка. Если звонок не пошел, возможно, его блокирует ОС.');
+                
+                // Основной вызов, который должен сработать
+                Telegram.WebApp.openLink(telUrl);
+            } else {
+                // Запасной вариант для обычных браузеров
+                window.location.href = telUrl;
+            }
+        }
+
         Telegram.WebApp.ready();
         
         // --- КОД ПРЕДЗАГРУЗЧИКА ---
