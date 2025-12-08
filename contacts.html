@@ -90,8 +90,8 @@
     </div>
 
     <script>
-        // АГРЕССИВНЫЙ ХАК: Запускает звонок через закрытие Web App
         function promptCall(name, number) {
+            // Форматируем номер для красивого отображения
             const displayNum = number.replace('+', '').replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 ($2) $3-$4-$5');
             
             if (!window.Telegram || !Telegram.WebApp) {
@@ -100,21 +100,14 @@
             }
 
             Telegram.WebApp.showConfirm(
-                `Позвонить менеджеру ${name}? \n${displayNum}`,
+                `Позвонить менеджеру ${name}? \nНомер: ${displayNum}`,
                 (ok) => {
                     if (ok) {
-                        const cleanNumber = number.replace('+', ''); 
-                        const telUrl = 'tel:' + cleanNumber;
+                        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: Передаем номер с плюсом (+7...)
+                        const telUrl = 'tel:' + number;
                         
-                        // 1. Пытаемся закрыть приложение (на некоторых iOS это нужно для высвобождения контекста)
-                        Telegram.WebApp.close();
-
-                        // 2. Сразу же, после закрытия, вызываем звонок через openLink.
-                        // Это самая последняя надежда, что Telegram позволит системный вызов.
-                        // Мы используем setTimeout, чтобы убедиться, что close() запустился.
-                        setTimeout(() => {
-                            Telegram.WebApp.openLink(telUrl); 
-                        }, 50); 
+                        // Запускаем звонок через openLink
+                        Telegram.WebApp.openLink(telUrl); 
                     }
                 }
             );
