@@ -37,18 +37,18 @@
         .contact-card {
             cursor: pointer; /* Делаем карточку явно кликабельной */
             transition: transform 0.1s ease; /* Добавляем эффект нажатия */
+            /* Убедимся, что клик по карточке срабатывает */
+            padding: 20px; /* Должен быть в стилях, но для гарантии */
         }
         .contact-card:active {
             transform: scale(0.98);
         }
         .contact-name {
             margin-bottom: 0;
-            /* Выравниваем текст, если он был центрирован стилем contact-card */
             text-align: center; 
         }
-        /* Убираем лишний отступ снизу у имени, так как роли нет */
         .contact-info {
-            width: 100%; /* Занимает всю ширину карточки */
+            width: 100%; 
         }
     </style>
 </head>
@@ -75,7 +75,7 @@
                 <div class="contact-info">
                     <h3 class="contact-name">Вадим</h3>
                 </div>
-                </div>
+            </div>
 
             <div class="contact-card" onclick="promptCall('Алексей', '+79137871232')">
                 <div class="contact-info">
@@ -99,19 +99,21 @@
             const displayNum = number.replace('+', '').replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 ($2) $3-$4-$5');
             
             if (!window.Telegram || !Telegram.WebApp) {
-                // Если это не Telegram Web App (запасной вариант)
+                // Запасной вариант для обычных браузеров
                 window.location.href = 'tel:' + number;
                 return;
             }
 
-            // Используем showConfirm, который на телефоне обычно называется "Да" / "Нет" 
-            // или "Позвонить" / "Отмена"
             Telegram.WebApp.showConfirm(
                 `Позвонить менеджеру ${name}? \n${displayNum}`,
                 (ok) => {
                     if (ok) {
-                        // Пользователь подтвердил звонок -> запускаем системный вызов
-                        Telegram.WebApp.openLink('tel:' + number);
+                        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: Удаляем символ '+' из номера 
+                        // для максимальной совместимости с ОС (tel:7923...)
+                        const cleanNumber = number.replace('+', ''); 
+                        const telUrl = 'tel:' + cleanNumber; 
+                        
+                        Telegram.WebApp.openLink(telUrl);
                     }
                 }
             );
