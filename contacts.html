@@ -89,48 +89,17 @@
     </div>
 
     <script>
-    // НОВАЯ ФУНКЦИЯ: Запуск диалогового окна с подтверждением звонка
+    // НОВАЯ ФУНКЦИЯ: СРАЗУ ИНИЦИИРУЕТ СИСТЕМНЫЙ ЗВОНОК
     function promptCall(name, number) {
-        // Форматируем номер для красивого отображения: +7 (XXX) XXX-XX-XX
-        const displayNum = number.replace('+', '').replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '+$1 ($2) $3-$4-$5');
-        
-        if (!window.Telegram || !Telegram.WebApp) {
-            // Если это не Telegram Web App (запасной вариант)
+        // Протокол tel: вызывает нативное диалоговое окно ОС (iOS/Android) 
+        // с подтверждением звонка, как на вашем скриншоте.
+        if (window.Telegram && Telegram.WebApp) {
+             // Используем openLink для корректной обработки в Telegram Web App
+            Telegram.WebApp.openLink('tel:' + number);
+        } else {
+             // Запасной вариант для обычного браузера
             window.location.href = 'tel:' + number;
-            return;
         }
-
-        // --- ИСПОЛЬЗУЕМ showPopup ДЛЯ ИМИТАЦИИ СИСТЕМНОГО ОКНА ---
-        // Это более гибко для создания кнопок, как на вашем скриншоте.
-        Telegram.WebApp.showPopup(
-            {
-                // Заголовок и текст сообщения - можно оставить пустыми, если не нужны
-                title: `Связаться с ${name}`,
-                message: `Вы собираетесь позвонить менеджеру ${name} по номеру ${displayNum}.`,
-                buttons: [
-                    {
-                        // Первая кнопка: Позвонить +7 (XXX) XXX-XX-XX
-                        id: 'call', 
-                        type: 'default', 
-                        text: `Позвонить ${displayNum}` // Текст кнопки, как на вашем скрине
-                    },
-                    {
-                        // Вторая кнопка: Отменить
-                        id: 'cancel', 
-                        type: 'cancel', 
-                        text: 'Отменить'
-                    }
-                ]
-            },
-            (buttonId) => {
-                if (buttonId === 'call') {
-                    // Пользователь подтвердил звонок -> запускаем системный вызов
-                    // Сразу откроется системное окно, как на скрине, или начнется звонок
-                    Telegram.WebApp.openLink('tel:' + number);
-                }
-            }
-        );
-        // --------------------------------------------------------
     }
 
     Telegram.WebApp.ready();
