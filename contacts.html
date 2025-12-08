@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru" style="--tg-viewport-height: 100vh; --tg-viewport-stable-height: 100vh;"><head>
+<html lang="ru" style="--tg-viewport-height: 100vh; --tg-viewport-stable-height: 100vh;">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Наши Менеджеры</title>
@@ -31,22 +32,29 @@
             padding: 12px 20px; 
         }
         
-        /* Стили для КЛИКАБЕЛЬНЫХ КАРТОЧЕК */
+        /* Стили для КЛИКАБЕЛЬНЫХ КАРТОЧЕК (теперь это теги <a>) */
         .contact-card {
             cursor: pointer; /* Делаем карточку явно кликабельной */
             transition: transform 0.1s ease; /* Добавляем эффект нажатия */
+            text-decoration: none; /* Убираем подчеркивание у ссылки */
+            color: inherit; /* Наследуем цвет текста от родителя */
+            display: flex; /* Чтобы карточка занимала всю ширину */
+            margin-bottom: 10px; /* Сохраняем отступ между карточками */
+            padding: 15px; /* Сохраняем внутренние отступы, если они были */
+            background-color: var(--secondary-bg-color, #2c2c2c); /* Пример цвета фона */
+            border-radius: 10px;
         }
         .contact-card:active {
             transform: scale(0.98);
         }
         .contact-name {
             margin-bottom: 0;
-            /* Выравниваем текст, если он был центрирован стилем contact-card */
             text-align: center; 
         }
-        /* Убираем лишний отступ снизу у имени, так как роли нет */
         .contact-info {
             width: 100%; /* Занимает всю ширину карточки */
+            display: flex;
+            justify-content: center; /* Центрируем имя */
         }
     </style>
 </head>
@@ -66,42 +74,29 @@
                 Написать нам (Telegram)
             </a>
 
-
-            <div class="contact-card" onclick="promptCall('Вадим', '+79232220001')">
+            <a href="tel:+79232220001" class="contact-card">
                 <div class="contact-info">
                     <h3 class="contact-name">Вадим</h3>
                 </div>
-                </div>
-
-            <div class="contact-card" onclick="promptCall('Алексей', '+79137871232')">
+            </a>
+            
+            <a href="tel:+79137871232" class="contact-card">
                 <div class="contact-info">
                     <h3 class="contact-name">Алексей</h3>
                 </div>
-            </div>
+            </a>
             
-            <div class="contact-card" onclick="promptCall('Николай', '+79139176644')">
+            <a href="tel:+79139176644" class="contact-card">
                 <div class="contact-info">
                     <h3 class="contact-name">Николай</h3>
                 </div>
+            </a>
             </div>
-
-        </div>
     </div>
 
     <script>
-    // НОВАЯ ФУНКЦИЯ: СРАЗУ ИНИЦИИРУЕТ СИСТЕМНЫЙ ЗВОНОК
-    function promptCall(name, number) {
-        // Протокол tel: вызывает нативное диалоговое окно ОС (iOS/Android) 
-        // с подтверждением звонка, как на вашем скриншоте.
-        if (window.Telegram && Telegram.WebApp) {
-             // Используем openLink для корректной обработки в Telegram Web App
-            Telegram.WebApp.openLink('tel:' + number);
-        } else {
-             // Запасной вариант для обычного браузера
-            window.location.href = 'tel:' + number;
-        }
-    }
-
+    // --- ФУНКЦИЯ promptCall УДАЛЕНА. Звонок инициируется через нативные <a href="tel:..."> ---
+    
     Telegram.WebApp.ready();
     
     // --- КОД ПРЕДЗАГРУЗЧИКА (ОСТАВЛЕН БЕЗ ИЗМЕНЕНИЙ) ---
@@ -123,7 +118,7 @@
     });
     // --------------------------
 
-    // Настройка навигации (ОСТАВЛЕНА БЕЗ ИЗМЕНЕНИЙ)
+    // Настройка навигации
     Telegram.BackButton.show();
 
     Telegram.BackButton.onClick(() => {
@@ -132,4 +127,5 @@
 </script>
 
 
-</body></html>
+</body>
+</html>
