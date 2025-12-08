@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали автомобиля</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Дополнительные стили для страницы деталей */
+        .details-container {
+            padding: 20px 0;
+        }
+
+        .details-gallery {
+            width: 100%;
+            height: 250px;
+            background-color: var(--input-bg);
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .details-price {
+            font-size: 2em;
+            font-weight: 800;
+            color: var(--accent-light);
+            margin: 10px 0 20px 0;
+            text-align: center;
+        }
+
+        .details-section {
+            background-color: var(--card-bg-blur);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .details-section h3 {
+            color: var(--accent-light);
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .spec-label {
+            font-size: 0.8em;
+            color: var(--hint-color);
+        }
+
+        .spec-value {
+            font-size: 1em;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .description-text {
+            white-space: pre-wrap;
+            /* Сохранение переносов строк из описания */
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="page-title" id="carTitle"></h1>
+        </header>
+
+        <div id="carDetails" class="details-container" style="display: none;">
+
+            <div class="details-gallery">
+                <img id="mainImage" class="gallery-image" src="https://via.placeholder.com/600x400?text=Loading..." alt="Фото автомобиля">
+            </div>
+
+            <h2 id="carPrice" class="details-price"></h2>
+
+            <div class="details-section">
+                <h3>Основные характеристики</h3>
+                <div class="specs-grid">
+                    <div class="spec-item">
+                        <span class="spec-label">Год выпуска</span>
+                        <span class="spec-value" id="specYear"></span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Пробег</span>
+                        <span class="spec-value" id="specMileage"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-section">
+                <h3>Подробное описание</h3>
+                <p id="carDescription" class="description-text"></p>
+            </div>
+            
+            <a href="#" id="managerLink" target="_blank" class="contact-button main-contact-button">
+                СВЯЗАТЬСЯ С МЕНЕДЖЕРОМ
+            </a>
+
+        </div>
+        
+        <div id="errorState" style="text-align: center; color: var(--hint-color); padding: 50px; display: none;">
+            <p>🚫 Ошибка: Информация об автомобиле не найдена.</p>
+        </div>
+    </div>
+
+    <script>
+        const MINIMUM_DISPLAY_TIME = 2000;
+        const startTime = Date.now();
+        const detailsContainer = document.getElementById('carDetails');
+        const errorState = document.getElementById('errorState');
+        
+        function hidePreloader() {
+            const preloader = document.getElementById("preloader");
+            if (!preloader) return;
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, MINIMUM_DISPLAY_TIME - elapsedTime);
+
+            setTimeout(() => {
+                preloader.classList.add("hidden");
+                setTimeout(() => {
+                    preloader.remove();
+                }, 500);
+            }, remainingTime);
+        }
+
+        function renderDetails(car) {
+            if (!car) {
+                errorState.style.display = 'block';
+                return;
+            }
+
+            document.getElementById('carTitle').textContent = car.title;
+            document.getElementById('carPrice').textContent = car.price;
+            document.getElementById('specYear').textContent = car.year;
+            document.getElementById('specMileage').textContent = car.mileage;
+            document.getElementById('carDescription').textContent = car.description || 'Описание отсутствует.';
+            document.getElementById('mainImage').src = car.image_url || 'https://via.placeholder.com/600x400?text=Photo+Unavailable';
+            
+            // Ссылка на менеджера берется из константы в app.py
+            document.getElementById('managerLink').href = car.manager_link || 'https://t.me/K_Dim17'; 
+            
+            detailsContainer.style.display = 'block';
+        }
+
+        function loadCarDetails() {
+            // Получаем данные из localStorage, куда они были сохранены на catalog.html
+            const carDataJSON = localStorage.getItem('current_car_details');
+            
+            if (carDataJSON) {
+                const car = JSON.parse(carDataJSON);
+                renderDetails(car);
+            } else {
+                // Если нет в localStorage (например, переход по прямой ссылке),
+                // можно попытаться запросить по ID из URL.
+                errorState.style.display = 'block';
+            }
+            
+            hidePreloader();
+        }
+
+        Telegram.WebApp.ready();
+        // Включаем кнопку "Назад"
+        Telegram.BackButton.show();
+        Telegram.BackButton.onClick(() => {
+            // Возвращаемся к списку
+            window.location.href = 'catalog.html';
+        });
+
+        loadCarDetails();
+    </script>
+
+</body>
+
+</html>
