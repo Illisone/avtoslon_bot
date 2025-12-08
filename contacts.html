@@ -9,7 +9,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* Стили для основной кнопки "Написать нам" */
+        /* Общие стили для кнопок */
         .contact-button {
             display: block;
             width: 100%;
@@ -34,12 +34,11 @@
             padding: 12px 20px; 
         }
         
-        /* СТИЛЬ: КЛИКАБЕЛЬНАЯ КАРТОЧКА МЕНЕДЖЕРА ДЛЯ ЗВОНКА */
+        /* СТИЛЬ: КЛИКАБЕЛЬНАЯ КАРТОЧКА МЕНЕДЖЕРА ДЛЯ ЗВОНКА (самая надежная) */
         .call-card {
             display: flex;
             align-items: center; 
             gap: 15px; 
-            /* *** ИСПРАВЛЕНИЕ: ЦЕНТРИРОВАНИЕ *** */
             justify-content: center; /* Центрируем содержимое по горизонтали */
             
             /* Основа дизайна */
@@ -61,11 +60,26 @@
             margin: 0; 
             font-weight: normal; 
         }
-
         .call-icon {
             font-size: 1.2em;
             color: white !important; 
             filter: grayscale(1) brightness(2); 
+        }
+        
+        /* Дополнительный стиль для карточки Дмитрия, которая ведет в Telegram */
+        .telegram-card {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: var(--card-bg-blur);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .telegram-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -83,10 +97,13 @@
 
         <div id="contact-list" style="margin-top: 20px;">
             
-            <a href="https://t.me/K_Dim17" target="_blank" class="contact-button main-contact-button">
-                Написать нам (Telegram)
-            </a>
-
+            <div class="telegram-card">
+                <h3>Дмитрий</h3>
+                <p style="color: var(--hint-color); margin: 5px 0 15px 0;">Ведущий специалист по импорту из Кореи</p>
+                <a href="https://t.me/K_Dim17" target="_blank" class="contact-button">
+                    ✍️ Написать в Telegram
+                </a>
+            </div>
 
             <a href="#" onclick="return openCallLink('tel:+79232220001');" class="call-card">
                 <span class="call-icon">📞</span>
@@ -113,27 +130,36 @@
     </div>
 
     <script>
-        // Инициализация WebApp
+        // Инициализация WebApp должна быть первой операцией
         Telegram.WebApp.ready();
         
         /**
          * Использует Telegram.WebApp.openLink для принудительного открытия 
          * ссылки tel: во внешнем приложении/системном диалоге.
+         * ЭТО САМЫЙ НАДЕЖНЫЙ МЕТОД В MINI APP.
          * @param {string} url - Ссылка, которую нужно открыть (например, 'tel:+79137871232').
          */
         function openCallLink(url) {
             if (Telegram.WebApp.openLink) {
+                // Принудительное открытие внешней ссылки, что должно вызвать системное окно звонка
                 Telegram.WebApp.openLink(url);
             } else {
-                // Резервный вариант, если API недоступен
+                // Резервный вариант (редко работает в Mini App)
                 window.location.href = url;
             }
-            return false; // Отменяем стандартное действие перехода по href="#"
+            // Всегда возвращаем false, чтобы остановить переход по href="#"
+            return false; 
         }
         // --------------------------
 
+        // Настройка кнопки "Назад"
+        Telegram.BackButton.show();
+        Telegram.BackButton.onClick(() => {
+            Telegram.close();
+        });
 
-        // Код предзагрузчика
+
+        // Код предзагрузчика (оставлен без изменений)
         const startTime = Date.now();
         const MINIMUM_DISPLAY_TIME = 2000;
 
