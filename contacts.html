@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE TWA>
 <html lang="ru" style="--tg-viewport-height: 100vh; --tg-viewport-stable-height: 100vh;">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Стили для кнопок из предыдущих версий */
+        /* Стили для кнопок */
         .contact-button {
             display: block;
             width: 100%;
@@ -32,14 +32,28 @@
             padding: 12px 20px; 
         }
         
-        /* Стили для КЛИКАБЕЛЬНЫХ КАРТОЧЕК (должны быть в styles.css, но для гарантии) */
+        /* --- СТИЛИ ДЛЯ КЛИКАБЕЛЬНОСТИ И Z-INDEX --- */
+        #contact-list {
+            position: relative;
+            z-index: 10; 
+        }
+        
         .contact-card {
             cursor: pointer;
             transition: transform 0.1s ease;
             margin-bottom: 10px; 
             padding: 15px; 
-            /* Если стили из styles.css не подхватываются, убедитесь, что они корректны */
+            background-color: var(--card-bg-blur);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 11;
         }
+        /* ----------------------------------------------- */
+
         .contact-card:active {
             transform: scale(0.98);
         }
@@ -49,8 +63,17 @@
         }
         .contact-info {
             width: 100%;
-            display: flex;
-            justify-content: center;
+        }
+        
+        /* Стили для прелоадера (чтобы не перехватывал клики после скрытия) */
+        #preloader.hidden {
+            opacity: 0;
+            pointer-events: none; 
+        }
+        
+        /* Дополнительные стили, которые должны быть в styles.css, но оставлены для .loader */
+        .loader {
+             /* ... стили вашего .loader из styles.css ... */
         }
     </style>
 </head>
@@ -99,12 +122,13 @@
     const startTime = Date.now();
     const MINIMUM_DISPLAY_TIME = 2000;
 
-    // --- ФУНКЦИЯ ЗВОНКА (МЕТОД TWA) ---
+    // --- ФУНКЦИЯ ЗВОНКА (ЧИСТЫЙ ВЫЗОВ СИСТЕМНОГО ОКНА) ---
     function promptCall(number) {
-        // Используем openLink, чтобы явно сообщить Telegram, что нужно открыть системную ссылку
         if (window.Telegram && Telegram.WebApp) {
-             Telegram.WebApp.openLink('tel:' + number);
+            // openTelegramLink - самая "агрессивная" команда для системных URL
+            Telegram.WebApp.openTelegramLink('tel:' + number); 
         } else {
+            // Запасной вариант для обычного браузера
             window.location.href = 'tel:' + number;
         }
     }
@@ -118,10 +142,8 @@
         const remainingTime = Math.max(0, MINIMUM_DISPLAY_TIME - elapsedTime);
 
         setTimeout(() => {
-            // 1. Скрываем (запускаем CSS-переход)
             preloader.classList.add("hidden");
             
-            // 2. Удаляем из DOM после завершения анимации (0.5 секунды)
             setTimeout(() => {
                 preloader.remove();
             }, 500);
@@ -131,7 +153,7 @@
     // --- ИНИЦИАЛИЗАЦИЯ ---
     Telegram.WebApp.ready();
     
-    // Скрываем прелоадер после полной загрузки страницы с минимальной задержкой в 2 секунды
+    // Скрываем прелоадер после полной загрузки страницы
     window.addEventListener("load", hidePreloader);
 
     // Настройка навигации
