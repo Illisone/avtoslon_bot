@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Стили для кнопок из предыдущих версий, сохранены для "Написать нам" */
+        /* Стили без изменений */
         .contact-button {
             display: block;
             width: 100%;
@@ -32,8 +32,6 @@
             font-size: 1em; 
             padding: 12px 20px; 
         }
-        
-        /* Стили для КЛИКАБЕЛЬНЫХ КАРТОЧЕК */
         .contact-card {
             cursor: pointer; 
             transition: transform 0.1s ease; 
@@ -92,13 +90,11 @@
     </div>
 
     <script>
-        // НОВАЯ ФУНКЦИЯ: Запуск диалогового окна с подтверждением звонка
+        // АГРЕССИВНЫЙ ХАК: Запускает звонок через закрытие Web App
         function promptCall(name, number) {
-            // Форматируем номер для красивого отображения: +7 (XXX) XXX-XX-XX
             const displayNum = number.replace('+', '').replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 ($2) $3-$4-$5');
             
             if (!window.Telegram || !Telegram.WebApp) {
-                // Запасной вариант для обычных браузеров
                 window.location.href = 'tel:' + number;
                 return;
             }
@@ -107,12 +103,18 @@
                 `Позвонить менеджеру ${name}? \n${displayNum}`,
                 (ok) => {
                     if (ok) {
-                        // Ключевой обходной путь: Перенаправляем на HTTPS-ссылку, 
-                        // которая содержит tel: и должна открыться в системном браузере.
                         const cleanNumber = number.replace('+', ''); 
-                        const telUrl = `https://t.me/proxy?${cleanNumber}`; // Этого достаточно для перенаправления
+                        const telUrl = 'tel:' + cleanNumber;
                         
-                        Telegram.WebApp.openLink(telUrl);
+                        // 1. Пытаемся закрыть приложение (на некоторых iOS это нужно для высвобождения контекста)
+                        Telegram.WebApp.close();
+
+                        // 2. Сразу же, после закрытия, вызываем звонок через openLink.
+                        // Это самая последняя надежда, что Telegram позволит системный вызов.
+                        // Мы используем setTimeout, чтобы убедиться, что close() запустился.
+                        setTimeout(() => {
+                            Telegram.WebApp.openLink(telUrl); 
+                        }, 50); 
                     }
                 }
             );
@@ -120,7 +122,7 @@
 
         Telegram.WebApp.ready();
         
-        // --- КОД ПРЕДЗАГРУЗЧИКА ---
+        // --- КОД ПРЕДЗАГРУЗЧИКА и НАВИГАЦИИ без изменений ---
         const startTime = Date.now();
         const MINIMUM_DISPLAY_TIME = 2000;
 
@@ -137,11 +139,8 @@
                 }, 500);
             }, remainingTime);
         });
-        // --------------------------
 
-        // Настройка навигации
         Telegram.BackButton.show();
-
         Telegram.BackButton.onClick(() => {
             Telegram.close();
         });
