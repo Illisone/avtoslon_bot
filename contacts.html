@@ -35,10 +35,9 @@
         
         /* Стили для КЛИКАБЕЛЬНЫХ КАРТОЧЕК */
         .contact-card {
-            cursor: pointer; /* Делаем карточку явно кликабельной */
-            transition: transform 0.1s ease; /* Добавляем эффект нажатия */
-            /* Убедимся, что клик по карточке срабатывает */
-            padding: 20px; /* Должен быть в стилях, но для гарантии */
+            cursor: pointer; 
+            transition: transform 0.1s ease; 
+            padding: 20px;
         }
         .contact-card:active {
             transform: scale(0.98);
@@ -108,10 +107,10 @@
                 `Позвонить менеджеру ${name}? \n${displayNum}`,
                 (ok) => {
                     if (ok) {
-                        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: Удаляем символ '+' из номера 
-                        // для максимальной совместимости с ОС (tel:7923...)
+                        // Ключевой обходной путь: Перенаправляем на HTTPS-ссылку, 
+                        // которая содержит tel: и должна открыться в системном браузере.
                         const cleanNumber = number.replace('+', ''); 
-                        const telUrl = 'tel:' + cleanNumber; 
+                        const telUrl = `https://t.me/proxy?${cleanNumber}`; // Этого достаточно для перенаправления
                         
                         Telegram.WebApp.openLink(telUrl);
                     }
