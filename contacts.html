@@ -6,11 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Наши Менеджеры</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Стили без изменений */
+        /* Стили для основной кнопки "Написать нам" */
         .contact-button {
-            display: block;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            
             width: 100%;
             padding: 12px;
             background-color: var(--accent-color);
@@ -19,7 +21,6 @@
             border-radius: 8px;
             font-weight: bold;
             transition: background-color 0.2s ease;
-            text-align: center;
             border: none;
             cursor: pointer;
             box-sizing: border-box; 
@@ -32,20 +33,58 @@
             font-size: 1em; 
             padding: 12px 20px; 
         }
-        .contact-card {
-            cursor: pointer; 
-            transition: transform 0.1s ease; 
+        /* СТИЛЬ ИКОНКИ TELEGRAM */
+        .telegram-icon {
+            margin-right: 10px; 
+            font-size: 1.2em;
+        }
+        
+        /* СТИЛЬ: КЛИКАБЕЛЬНАЯ КАРТОЧКА МЕНЕДЖЕРА ДЛЯ ЗВОНКА */
+        .call-card {
+            display: flex;
+            align-items: center; 
+            /* *** КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ ДЛЯ ЦЕНТРИРОВАНИЯ *** */
+            justify-content: space-between; /* Распределяем элементы по краям */
+            
+            /* Основа дизайна */
+            background-color: var(--card-bg-blur);
+            backdrop-filter: blur(8px);
             padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-decoration: none; 
+            color: var(--text-color);
+            transition: background-color 0.2s;
         }
-        .contact-card:active {
-            transform: scale(0.98);
+        .call-card:hover {
+             background-color: rgba(26, 26, 26, 0.9);
         }
-        .contact-name {
-            margin-bottom: 0;
-            text-align: center; 
+        .call-card h3 {
+            margin: 0; 
+            font-weight: normal; 
+            /* *** ИМЯ МЕНЕДЖЕРА ЦЕНТРИРУЕТСЯ ВНУТРИ СВОЕГО БЛОКА *** */
+            text-align: center;
         }
+        
+        /* БЛОК ДЛЯ ИМЕНИ */
         .contact-info {
-            width: 100%; 
+            flex-grow: 1; /* Занимает все доступное пространство между иконкой и заполнителем */
+        }
+        
+        /* СТИЛЬ ИКОНКИ ТРУБКИ */
+        .call-icon {
+            font-size: 1.2em;
+            color: white !important; 
+            filter: grayscale(1) brightness(2); 
+            min-width: 25px; /* Задаем фиксированную ширину для симметрии */
+            text-align: left;
+        }
+
+        /* СТИЛЬ ЗАПОЛНИТЕЛЯ */
+        .call-placeholder {
+            min-width: 25px; /* Имеет ту же ширину, что и иконка, чтобы центрировать имя */
         }
     </style>
 </head>
@@ -57,65 +96,45 @@
     
     <div class="container" style="padding-top: 20px;">
         <header class="header">
-            <h1 class="page-title">Наши Менеджеры</h1>
-            <p style="color: var(--hint-color); text-align: center;">Выберите, как Вам удобнее связаться.</p>
+            <h1 class="page-title">Выберите своего менеджера и удобный способ связи:</h1>
         </header>
 
         <div id="contact-list" style="margin-top: 20px;">
             
             <a href="https://t.me/K_Dim17" target="_blank" class="contact-button main-contact-button">
-                Написать нам (Telegram)
+                НАПИСАТЬ НАМ В TELEGRAM
             </a>
 
 
-            <div class="contact-card" onclick="promptCall('Вадим', '+79232220001')">
+            <a href="tel:+79232220001" class="call-card">
+                <span class="call-icon">📞</span>
                 <div class="contact-info">
-                    <h3 class="contact-name">Вадим</h3>
+                    <h3>Вадим</h3>
                 </div>
-            </div>
+                <span class="call-placeholder"></span>
+            </a>
 
-            <div class="contact-card" onclick="promptCall('Алексей', '+79137871232')">
+            <a href="tel:+79137871232" class="call-card">
+                <span class="call-icon">📞</span>
                 <div class="contact-info">
-                    <h3 class="contact-name">Алексей</h3>
+                    <h3>Алексей</h3>
                 </div>
-            </div>
+                <span class="call-placeholder"></span>
+            </a>
             
-            <div class="contact-card" onclick="promptCall('Николай', '+79139176644')">
+            <a href="tel:+79139176644" class="call-card">
+                <span class="call-icon">📞</span>
                 <div class="contact-info">
-                    <h3 class="contact-name">Николай</h3>
+                    <h3>Николай</h3>
                 </div>
-            </div>
+                <span class="call-placeholder"></span>
+            </a>
 
         </div>
     </div>
 
     <script>
-        function promptCall(name, number) {
-            // Форматируем номер для красивого отображения
-            const displayNum = number.replace('+', '').replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 ($2) $3-$4-$5');
-            
-            if (!window.Telegram || !Telegram.WebApp) {
-                window.location.href = 'tel:' + number;
-                return;
-            }
-
-            Telegram.WebApp.showConfirm(
-                `Позвонить менеджеру ${name}? \nНомер: ${displayNum}`,
-                (ok) => {
-                    if (ok) {
-                        // КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: Передаем номер с плюсом (+7...)
-                        const telUrl = 'tel:' + number;
-                        
-                        // Запускаем звонок через openLink
-                        Telegram.WebApp.openLink(telUrl); 
-                    }
-                }
-            );
-        }
-
-        Telegram.WebApp.ready();
-        
-        // --- КОД ПРЕДЗАГРУЗЧИКА и НАВИГАЦИИ без изменений ---
+        // Код предзагрузчика
         const startTime = Date.now();
         const MINIMUM_DISPLAY_TIME = 2000;
 
@@ -131,11 +150,6 @@
                     preloader.remove();
                 }, 500);
             }, remainingTime);
-        });
-
-        Telegram.BackButton.show();
-        Telegram.BackButton.onClick(() => {
-            Telegram.close();
         });
     </script>
 </body>
