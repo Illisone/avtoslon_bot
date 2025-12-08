@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Общий стиль для всех кнопок */
+        /* Стили для кнопок из предыдущих версий, сохранены для "Написать нам" */
         .contact-button {
             display: block;
             width: 100%;
@@ -27,21 +27,28 @@
         .contact-button:hover {
             background-color: var(--accent-light);
         }
-        /* Стиль для кнопки "Написать нам" */
         .main-contact-button {
             margin-bottom: 25px; 
             font-size: 1em; 
             padding: 12px 20px; 
         }
-
-        /* Стиль для кнопок "Позвонить" */
-        .contact-card .contact-button {
-            margin-top: 10px;
-        }
         
-        /* Убираем лишний отступ снизу у имени */
+        /* Стили для КЛИКАБЕЛЬНЫХ КАРТОЧЕК */
+        .contact-card {
+            cursor: pointer; /* Делаем карточку явно кликабельной */
+            transition: transform 0.1s ease; /* Добавляем эффект нажатия */
+        }
+        .contact-card:active {
+            transform: scale(0.98);
+        }
         .contact-name {
             margin-bottom: 0;
+            /* Выравниваем текст, если он был центрирован стилем contact-card */
+            text-align: center; 
+        }
+        /* Убираем лишний отступ снизу у имени, так как роли нет */
+        .contact-info {
+            width: 100%; /* Занимает всю ширину карточки */
         }
     </style>
 </head>
@@ -64,53 +71,50 @@
             </a>
 
 
-            <div class="contact-card">
+            <div class="contact-card" onclick="promptCall('Вадим', '+79232220001')">
                 <div class="contact-info">
                     <h3 class="contact-name">Вадим</h3>
                 </div>
-                <button type="button" onclick="openPhoneCall('+79232220001')" class="contact-button">
-                    Позвонить
-                </button>
-            </div>
+                </div>
 
-            <div class="contact-card">
+            <div class="contact-card" onclick="promptCall('Алексей', '+79137871232')">
                 <div class="contact-info">
                     <h3 class="contact-name">Алексей</h3>
                 </div>
-                <button type="button" onclick="openPhoneCall('+79137871232')" class="contact-button">
-                    Позвонить
-                </button>
             </div>
             
-            <div class="contact-card">
+            <div class="contact-card" onclick="promptCall('Николай', '+79139176644')">
                 <div class="contact-info">
                     <h3 class="contact-name">Николай</h3>
                 </div>
-                <button type="button" onclick="openPhoneCall('+79139176644')" class="contact-button">
-                    Позвонить
-                </button>
             </div>
 
         </div>
     </div>
 
     <script>
-        // Функция для принудительного открытия ссылки tel: через внешний браузер/приложение
-        function openPhoneCall(phoneNumber) {
-            // Удаляем символ '+' из номера
-            const cleanNumber = phoneNumber.replace('+', ''); 
-            const telUrl = 'tel:' + cleanNumber; 
+        // НОВАЯ ФУНКЦИЯ: Запуск диалогового окна с подтверждением звонка
+        function promptCall(name, number) {
+            // Форматируем номер для красивого отображения: +7 (XXX) XXX-XX-XX
+            const displayNum = number.replace('+', '').replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 ($2) $3-$4-$5');
             
-            if (window.Telegram && Telegram.WebApp) {
-                // ДИАГНОСТИКА: Показываем сообщение, чтобы убедиться, что код выполняется
-                Telegram.WebApp.showAlert('Запуск звонка. Если звонок не пошел, возможно, его блокирует ОС.');
-                
-                // Основной вызов, который должен сработать
-                Telegram.WebApp.openLink(telUrl);
-            } else {
-                // Запасной вариант для обычных браузеров
-                window.location.href = telUrl;
+            if (!window.Telegram || !Telegram.WebApp) {
+                // Если это не Telegram Web App (запасной вариант)
+                window.location.href = 'tel:' + number;
+                return;
             }
+
+            // Используем showConfirm, который на телефоне обычно называется "Да" / "Нет" 
+            // или "Позвонить" / "Отмена"
+            Telegram.WebApp.showConfirm(
+                `Позвонить менеджеру ${name}? \n${displayNum}`,
+                (ok) => {
+                    if (ok) {
+                        // Пользователь подтвердил звонок -> запускаем системный вызов
+                        Telegram.WebApp.openLink('tel:' + number);
+                    }
+                }
+            );
         }
 
         Telegram.WebApp.ready();
