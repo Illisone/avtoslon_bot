@@ -163,16 +163,18 @@
                 command: 'GET_CAR_CATALOG'
             }));
             console.log("Запрос GET_CAR_CATALOG отправлен.");
+        } else {
+            console.error("Telegram WebApp не инициализирован.");
         }
     }
     
     // 2. Рендеринг списка
     function renderCarList(cars) {
-        carListElement.innerHTML = ''; // Очистка
+        carListElement.innerHTML = ''; 
         
         if (!cars || cars.length === 0) {
             emptyStateElement.style.display = 'block';
-            hidePreloader();
+            hidePreloader(); 
             return;
         }
         
@@ -183,7 +185,6 @@
             card.className = 'car-card';
             card.setAttribute('data-id', car.id);
             
-            // Используем либо image_url (заглушка), либо 'Photo+Pending'
             const imageUrl = car.image_url || 'https://via.placeholder.com/600x400?text=Photo+Pending';
             
             card.innerHTML = `
@@ -199,7 +200,6 @@
             `;
             
             card.addEventListener('click', () => {
-                // Сохраняем данные для car_details.html
                 localStorage.setItem('current_car_details', JSON.stringify(car));
                 window.location.href = `car_details.html?id=${car.id}`;
             });
@@ -218,7 +218,6 @@
             if (data.command === 'CAR_CATALOG_DATA' && data.data) {
                 console.log("Получены данные каталога от бота.");
                 renderCarList(data.data);
-                // Сохраняем данные на случай, если пользователь перейдет на car_details
                 localStorage.setItem('car_catalog_data', JSON.stringify(data.data)); 
                 return true;
             }
@@ -230,22 +229,31 @@
     
     // --- ИНИЦИАЛИЗАЦИЯ ---
     
+    // 1. Уведомляем TWA о готовности
     Telegram.WebApp.ready();
     
-    // Пытаемся получить данные, если они были сохранены в localStorage 
-    // после предыдущего запроса (обходной путь для TWA)
+    // 2. 💡 ИСПРАВЛЕНИЕ: Проверяем инициализацию перед использованием TWA-объектов
+    if (window.Telegram && Telegram.WebApp) {
+        // Включаем кнопку "Назад"
+        if (Telegram.BackButton) {
+            Telegram.BackButton.show();
+            Telegram.BackButton.onClick(() => {
+                Telegram.WebApp.close();
+            });
+        }
+        
+        // Обновляем цветовую схему
+        if (Telegram.WebApp.themeParams) {
+            document.body.style.backgroundColor = Telegram.WebApp.themeParams.bg_color;
+        }
+    } else {
+        console.error("Кнопки TWA не могут быть инициализированы: Telegram.WebApp отсутствует.");
+    }
+    
+    // 3. Логика загрузки данных
     const storedDataJSON = localStorage.getItem('car_catalog_data');
     if (storedDataJSON) {
-        console.log("Загрузка данных из localStorage...");
-        if (handleDataReception(storedDataJSON)) {
-            // Если успешно загружено и отрендерено, не отправляем новый запрос
-            // и показываем данные.
-            console.log("Данные загружены из localStorage.");
-            
-            // Очищаем, чтобы при следующем открытии сперва был запрос
-            // localStorage.removeItem('car_catalog_data'); 
-            
-        } else {
+        if (!handleDataReception(storedDataJSON)) {
              // Если данные в localStorage испорчены, удаляем их и запрашиваем
              localStorage.removeItem('car_catalog_data'); 
              requestCarData();
@@ -255,21 +263,15 @@
         requestCarData();
     }
     
-    // Включаем кнопку "Назад"
-    Telegram.BackButton.show();
-    Telegram.BackButton.onClick(() => {
-        Telegram.WebApp.close();
-    });
-    
-    // Если через 5 секунд ничего не отобразилось (например, нет связи), показываем emptyState
+    // 4. Гарантированный таймаут для скрытия прелоадера (5 секунд)
     setTimeout(() => {
         if (carListElement.innerHTML === '') {
             emptyStateElement.style.display = 'block';
-            hidePreloader();
         }
+        // Скрываем прелоадер в любом случае
+        hidePreloader(); 
     }, 5000); 
 
-    
 </script>
 
 </body>
