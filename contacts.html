@@ -7,74 +7,7 @@
     <title>Наши Менеджеры</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-
-<body>
-    <div id="preloader">
-        <div class="loader"></div>
-    </div>
-    
-    <div class="container" style="padding-top: 20px;">
-        <header class="header">
-            <h1 class="page-title">Наши Менеджеры</h1>
-            <p style="color: var(--hint-color); text-align: center;">Выберите, кто поможет вам с подбором авто.</p>
-        </header>
-
-        <div id="contact-list" style="margin-top: 20px;">
-            
-            <div class="contact-card">
-                <div class="contact-info">
-                    <h3 class="contact-name">Дмитрий</h3>
-                    <p class="contact-role">Ведущий специалист по импорту из Кореи</p>
-                </div>
-                <a href="https://t.me/K_Dim17" target="_blank" class="contact-button">
-                    ✍️ Написать в Telegram
-                </a>
-            </div>
-
-            <div class="contact-card">
-                <div class="contact-info">
-                    <h3 class="contact-name">Александр</h3>
-                    <p class="contact-role">Эксперт по автомобилям из Китая и Японии</p>
-                </div>
-                <a href="https://t.me/Another_Manager_Username" target="_blank" class="contact-button">
-                    ✍️ Написать в Telegram
-                </a>
-            </div>
-            
-            </div>
-    </div>
-    
     <style>
-        .contact-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: var(--card-bg-blur);
-            backdrop-filter: blur(8px);
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-
-        .contact-photo {
-            display: none; 
-        }
-
-        .contact-name {
-            margin: 0 0 5px 0;
-            color: var(--text-color);
-        }
-
-        .contact-role {
-            color: var(--hint-color);
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-
         .contact-button {
             display: block;
             width: 100%;
@@ -85,11 +18,66 @@
             border-radius: 8px;
             font-weight: bold;
             transition: background-color 0.2s ease;
+            text-align: center; /* Центрируем текст внутри кнопки */
         }
         .contact-button:hover {
             background-color: var(--accent-light);
         }
+        /* Новый стиль для кнопки "Написать нам" */
+        .main-contact-button {
+            margin-bottom: 25px; /* Отступ от менеджеров */
+            font-size: 1.1em;
+            padding: 15px;
+        }
     </style>
+</head>
+
+<body>
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+    
+    <div class="container" style="padding-top: 20px;">
+        <header class="header">
+            <h1 class="page-title">Выбери своего менеджера</h1>
+        </header>
+
+        <div id="contact-list" style="margin-top: 20px;">
+            
+            <a href="https://t.me/K_Dim17" target="_blank" class="contact-button main-contact-button">
+                Написать нам
+            </a>
+
+
+            <div class="contact-card">
+                <div class="contact-info">
+                    <h3 class="contact-name">Вадим</h3>
+                </div>
+                <a href="tel:+79232220001" class="contact-button">
+                    Позвонить
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-info">
+                    <h3 class="contact-name">Алексей</h3>
+                </div>
+                <a href="tel:+79137871232" class="contact-button">
+                    Позвонить
+                </a>
+            </div>
+            
+            <div class="contact-card">
+                <div class="contact-info">
+                    <h3 class="contact-name">Николай</h3>
+                </div>
+                <a href="tel:+79139176644" class="contact-button">
+                    Позвонить
+                </a>
+            </div>
+
+        </div>
+    </div>
 
     <script>
         // ГЛАВНОЕ ИСПРАВЛЕНИЕ: Вызываем ready() немедленно
@@ -116,9 +104,9 @@
 
         // Настройка навигации
         Telegram.BackButton.show();
-        
+
         Telegram.BackButton.onClick(() => {
-            Telegram.WebApp.close();
+            Telegram.close();
         });
     </script>
 </body>
