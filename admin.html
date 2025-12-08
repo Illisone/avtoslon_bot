@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель "АвтоСлон"</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Минимальные стили для форм */
+        .card {
+            background-color: var(--card-bg-blur);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        h2 {
+            color: var(--accent-light);
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        input, textarea, button { 
+            width: 100%; 
+            margin-bottom: 10px; 
+            padding: 12px; 
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1em;
+        }
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        /* Добавьте стили для кнопки удаления */
+        .delete-button {
+            background: linear-gradient(145deg, #cc3333, #a02020);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        /* Прелоадер (для использования общих стилей) */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--main-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        #preloader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-light);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="preloader">
+        <div class="loader"></div> 
+    </div>
+    
+    <div class="container" style="padding-top: 20px;">
+        <h1>Админ-панель</h1>
+
+        <div class="card" id="addCarSection">
+            <h2>➕ Добавить Описание и Завершить</h2>
+            <p style="color: var(--hint-color);">*Медиа были загружены в чат. Здесь введите только описание.</p>
+            <textarea id="carText" placeholder="Полное описание авто (включая цену, модель, характеристики и т.д.). Используйте переносы строк."></textarea>
+            <button class="choice-button active" onclick="sendAddCarData()">Завершить Добавление в Каталог</button>
+        </div>
+
+        <div class="card" id="deleteCarSection">
+            <h2>➖ Удалить Авто</h2>
+            <p style="color: var(--hint-color);">Введите ID автомобиля, который необходимо удалить из `cars_data.json`.</p>
+            <input type="number" id="carIdToDelete" placeholder="Введите ID автомобиля (например, 15)">
+            <button class="delete-button" onclick="sendDeleteCarData()">Удалить из Каталога</button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+             <button class="choice-button" onclick="Telegram.WebApp.close()">Закрыть Админку</button>
+        </div>
+    </div>
+
+    <script>
+        Telegram.WebApp.ready();
+        
+        // Автоматически настраиваем цветовую схему
+        document.body.style.backgroundColor = Telegram.WebApp.themeParams.bg_color;
+        document.body.style.color = Telegram.WebApp.themeParams.text_color;
+        
+        // --- Логика добавления авто ---
+        function sendAddCarData() {
+            const carText = document.getElementById('carText').value;
+            
+            if (!carText.trim()) {
+                Telegram.WebApp.showAlert('Пожалуйста, введите описание автомобиля.');
+                return;
+            }
+
+            const payload = {
+                source: 'admin_app',
+                action: 'add_car',
+                text: carText,
+                // Медиа не отправляем, они в буфере бота
+            };
+
+            Telegram.WebApp.sendData(JSON.stringify(payload));
+            Telegram.WebApp.close(); 
+        }
+
+        // --- Логика удаления авто ---
+        function sendDeleteCarData() {
+            const carId = document.getElementById('carIdToDelete').value;
+
+            if (!carId || isNaN(parseInt(carId))) {
+                Telegram.WebApp.showAlert('Пожалуйста, введите корректный числовой ID автомобиля для удаления.');
+                return;
+            }
+            
+            // Предупреждение перед удалением
+            Telegram.WebApp.showConfirm(`Вы уверены, что хотите удалить автомобиль с ID ${carId}?`, (isConfirmed) => {
+                if (isConfirmed) {
+                    const payload = {
+                        source: 'admin_app',
+                        action: 'delete_car',
+                        car_id: parseInt(carId), 
+                    };
+
+                    Telegram.WebApp.sendData(JSON.stringify(payload));
+                    Telegram.WebApp.close(); 
+                }
+            });
+        }
+        
+        // --- Логика прелоадера ---
+        const startTime = Date.now();
+        const MINIMUM_DISPLAY_TIME = 500; // Уменьшим для админки
+        
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById("preloader");
+            if (!preloader) return;
+            
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, MINIMUM_DISPLAY_TIME - elapsedTime);
+
+            setTimeout(() => {
+                preloader.classList.add("hidden");
+                setTimeout(() => { preloader.remove(); }, 500);
+            }, remainingTime);
+        });
+        
+    </script>
+</body>
+</html>

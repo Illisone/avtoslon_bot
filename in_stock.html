@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авто в Наличии</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Стиль для превью */
+        .car-card {
+            background-color: var(--card-bg-blur);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .car-card-header {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--accent-light);
+            margin-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .car-card-text {
+            white-space: pre-wrap; /* Сохраняет переносы строк из текста JSON */
+            color: var(--text-color);
+            font-size: 0.95em;
+            line-height: 1.4;
+            max-height: 150px; /* Ограничиваем высоту превью текста */
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Добавляем градиент для скрытия части текста */
+        .car-card-text::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(to top, var(--card-bg-blur), rgba(0,0,0,0));
+        }
+
+        #catalog {
+            margin-top: 20px;
+        }
+        
+        /* Стили для кнопки "Показать в Telegram" */
+        .show-in-tg-button {
+            background: linear-gradient(145deg, #2A9D8F, #264653);
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .show-in-tg-button:active {
+            opacity: 0.8;
+        }
+        
+        /* Прелоадер (из вашего contacts.html) */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--main-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        #preloader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-light);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div id="preloader">
+        <div class="loader"></div> 
+    </div>
+
+    <div class="container" style="padding-top: 20px;">
+        <header class="header">
+            <h1 class="page-title">Автомобили в наличии (склад НСК)</h1>
+            <p style="color: var(--hint-color); text-align: center;">Для просмотра всех фото и видео нажмите "Показать в Telegram".</p>
+        </header>
+
+        <div id="catalog">
+            <p id="loadingStatus" style="text-align: center;">Загрузка данных...</p>
+        </div>
+    </div>
+
+    <script>
+        Telegram.WebApp.ready();
+        
+        const CATALOG_URL = './cars_data.json'; // Путь к вашему JSON-файлу
+        
+        // Автоматически настраиваем цветовую схему
+        document.body.style.backgroundColor = Telegram.WebApp.themeParams.bg_color;
+        document.body.style.color = Telegram.WebApp.themeParams.text_color;
+
+        /**
+         * Отправляет запрос боту для показа медиа-группы авто.
+         * @param {number} carId - ID автомобиля.
+         */
+        function showCarInTelegram(carId) {
+            const payload = {
+                source: 'in_stock_app',
+                action: 'show_car',
+                car_id: carId,
+            };
+            
+            // Отправляем ID авто в бот
+            Telegram.WebApp.sendData(JSON.stringify(payload));
+            
+            // Показываем уведомление (вместо закрытия app)
+            Telegram.WebApp.showPopup({
+                title: 'Запрос отправлен',
+                message: 'Фото и описание отправляются вам в основной чат Telegram. Это может занять несколько секунд.',
+                buttons: [{ id: 'ok', type: 'default', text: 'Понятно' }]
+            });
+        }
+
+        /**
+         * Рендерит каталог.
+         * @param {Array<Object>} cars - Список объектов автомобилей.
+         */
+        function renderCatalog(cars) {
+            const catalogDiv = document.getElementById('catalog');
+            catalogDiv.innerHTML = ''; // Очищаем статус загрузки
+
+            // Фильтруем автомобили, чтобы показать только те, у которых есть текст и медиа
+            const availableCars = cars.filter(car => car.text && car.media && car.media.length > 0);
+
+            if (availableCars.length === 0) {
+                catalogDiv.innerHTML = '<p style="text-align: center; color: var(--hint-color);">В данный момент автомобили в наличии отсутствуют. Скоро мы добавим новые!</p>';
+                return;
+            }
+
+            availableCars.forEach(car => {
+                // Извлекаем первую строку текста для заголовка
+                const title = car.text.split('\n')[0] || `Автомобиль ID ${car.id}`;
+                
+                const carElement = document.createElement('div');
+                carElement.className = 'car-card';
+                carElement.innerHTML = `
+                    <div class="car-card-header">${title.trim()}</div>
+                    <div class="car-card-text">${car.text}</div>
+                    <button 
+                        class="show-in-tg-button" 
+                        onclick="showCarInTelegram(${car.id})"
+                    >
+                        Показать все фото и видео в Telegram (${car.media.length} шт.)
+                    </button>
+                `;
+                catalogDiv.appendChild(carElement);
+            });
+            
+            // Обновляем высоту Mini App после рендеринга
+            Telegram.WebApp.viewportChanged(); 
+        }
+
+        /**
+         * Загружает данные из JSON.
+         */
+        async function loadCarsData() {
+            try {
+                const response = await fetch(CATALOG_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const carsData = await response.json();
+                renderCatalog(carsData);
+            } catch (error) {
+                console.error("Ошибка загрузки каталога:", error);
+                document.getElementById('loadingStatus').textContent = 'Ошибка загрузки каталога. Проверьте cars_data.json.';
+                document.getElementById('loadingStatus').style.color = 'red';
+            } finally {
+                hidePreloader();
+            }
+        }
+        
+        // --- КОД ПРЕЛОВДЕРА ---
+        const startTime = Date.now();
+        const MINIMUM_DISPLAY_TIME = 500;
+        
+        function hidePreloader() {
+            const preloader = document.getElementById("preloader");
+            if (!preloader) return;
+            
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, MINIMUM_DISPLAY_TIME - elapsedTime);
+
+            setTimeout(() => {
+                preloader.classList.add("hidden");
+                
+                setTimeout(() => {
+                    preloader.remove();
+                }, 500);
+            }, remainingTime);
+        }
+        
+        // --- ЗАПУСК ---
+        loadCarsData();
+        
+    </script>
+</body>
+</html>
