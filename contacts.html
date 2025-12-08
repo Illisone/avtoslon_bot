@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Наши Менеджеры</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script> 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
         /* Стили для основной кнопки "Написать нам" */
@@ -39,6 +39,7 @@
             display: flex;
             align-items: center; 
             gap: 15px; 
+            /* *** ИСПРАВЛЕНИЕ: ЦЕНТРИРОВАНИЕ *** */
             justify-content: center; /* Центрируем содержимое по горизонтали */
             
             /* Основа дизайна */
@@ -60,15 +61,12 @@
             margin: 0; 
             font-weight: normal; 
         }
-        .contact-info {
-             /* Убираем flex-grow, чтобы не ломать центрирование */
-        }
+
         .call-icon {
             font-size: 1.2em;
             color: white !important; 
             filter: grayscale(1) brightness(2); 
         }
-        /* Убираем .call-placeholder, так как он не нужен для центрирования при justify-content: center */
     </style>
 </head>
 
@@ -90,21 +88,21 @@
             </a>
 
 
-            <a href="#" onclick="openExternalLink('tel:+79232220001'); return false;" class="call-card">
+            <a href="#" onclick="return openCallLink('tel:+79232220001');" class="call-card">
                 <span class="call-icon">📞</span>
                 <div class="contact-info">
                     <h3>Вадим</h3>
                 </div>
             </a>
 
-            <a href="#" onclick="openExternalLink('tel:+79137871232'); return false;" class="call-card">
+            <a href="#" onclick="return openCallLink('tel:+79137871232');" class="call-card">
                 <span class="call-icon">📞</span>
                 <div class="contact-info">
                     <h3>Алексей</h3>
                 </div>
             </a>
             
-            <a href="#" onclick="openExternalLink('tel:+79139176644'); return false;" class="call-card">
+            <a href="#" onclick="return openCallLink('tel:+79139176644');" class="call-card">
                 <span class="call-icon">📞</span>
                 <div class="contact-info">
                     <h3>Николай</h3>
@@ -115,21 +113,22 @@
     </div>
 
     <script>
-        // ✅ ДОБАВЛЕНО: Инициализация WebApp и функция для обхода блокировки tel:
+        // Инициализация WebApp
         Telegram.WebApp.ready();
         
         /**
-         * Использует официальный метод Telegram для открытия ссылки во внешнем браузере.
-         * Это повышает надежность работы ссылок tel:
+         * Использует Telegram.WebApp.openLink для принудительного открытия 
+         * ссылки tel: во внешнем приложении/системном диалоге.
          * @param {string} url - Ссылка, которую нужно открыть (например, 'tel:+79137871232').
          */
-        function openExternalLink(url) {
+        function openCallLink(url) {
             if (Telegram.WebApp.openLink) {
                 Telegram.WebApp.openLink(url);
             } else {
-                // Резервный вариант
+                // Резервный вариант, если API недоступен
                 window.location.href = url;
             }
+            return false; // Отменяем стандартное действие перехода по href="#"
         }
         // --------------------------
 
