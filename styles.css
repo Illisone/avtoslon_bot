@@ -565,47 +565,82 @@ body::before {
 /* ======================================= */
 .contact-card {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    /* Изменено: Используем строку, чтобы имя и иконка были на одной линии */
+    flex-direction: row; 
+    
+    /* Добавлено: Центрируем содержимое по вертикали */
+    align-items: center; 
+    
+    /* Изменено: Растягиваем на всю ширину и убираем центрирование текста */
+    justify-content: space-between; 
+    
     /* Используем ваши переменные */
     background-color: var(--card-bg-blur);
     backdrop-filter: blur(8px);
-    padding: 20px;
+    padding: 15px;
     margin-bottom: 15px;
-    border-radius: 12px;
+    border-radius: 15px;
     border: 1px solid var(--border-color);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
+    
+    /* Убрал text-align: center; */
+    text-decoration: none; 
+    color: var(--text-color); 
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.contact-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 }
 
-/* Скрываем фото (если оно было) */
-.contact-photo {
-    display: none; 
+/* Стиль для кнопки Telegram */
+.main-contact-button {
+    display: block;
+    width: 100%;
+    padding: 20px 0px;
+    margin-bottom: 25px; /* Отступ после основной кнопки */
+    /* Используем градиент как для активной кнопки 'Next' */
+    background: linear-gradient(145deg, var(--accent-light), var(--accent-color));
+    color: #fff;
+    text-decoration: none;
+    border-radius: 15px; /* Большие скругления для главной кнопки */
+    font-size: 1.1em;
+    font-weight: 700;
+    text-align: center;
+    box-shadow: 0 0 8px rgba(0, 99, 199, 0.8);
+    transition: opacity 0.2s;
+}
+.main-contact-button:hover {
+    opacity: 0.9;
+}
+.contact-info {
+    /* Добавлено: Позволяет имени занимать все доступное место */
+    flex-grow: 1; 
+    /* Добавлено: Центрирует текст внутри себя */
+    text-align: center; 
 }
 
 .contact-name {
-    margin: 0 0 5px 0;
+    margin: 0; /* Увеличил верхний отступ, чтобы разделить от иконки */
     color: var(--text-color);
+    font-size: 1.3em;
+    font-weight: 400;
 }
 
-.contact-role {
-    color: var(--hint-color);
-    font-size: 0.9em;
-    margin-bottom: 15px;
+.contact-icon {
+    font-size: 2.5em; 
+    color: var(--text-color); 
+    line-height: 1;
+    margin-left: 10px; 
+    filter: grayscale(1) brightness(2);
+}
+.spacer {
+    /* Добавлено: Создает невидимый элемент, равный по ширине иконке */
+    width: 35px; /* Ширина иконки (2.5em = ~35px) + небольшой отступ */
+    height: 1px;
 }
 
-.contact-button {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    /* Используем ваши переменные */
-    background-color: var(--accent-color);
-    color: var(--text-color);
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.2s ease;
-}
 .contact-button:hover {
     background-color: var(--accent-light);
 }
+
