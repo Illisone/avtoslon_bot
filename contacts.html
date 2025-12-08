@@ -32,16 +32,14 @@
             padding: 12px 20px; 
         }
         
-        /* Стили для КЛИКАБЕЛЬНЫХ КАРТОЧЕК (теперь это теги <a>) */
+        /* Стили для КЛИКАБЕЛЬНЫХ КАРТОЧЕК (теперь это div) */
         .contact-card {
-            cursor: pointer; /* Делаем карточку явно кликабельной */
-            transition: transform 0.1s ease; /* Добавляем эффект нажатия */
-            text-decoration: none; /* Убираем подчеркивание у ссылки */
-            color: inherit; /* Наследуем цвет текста от родителя */
-            display: flex; /* Чтобы карточка занимала всю ширину */
-            margin-bottom: 10px; /* Сохраняем отступ между карточками */
-            padding: 15px; /* Сохраняем внутренние отступы, если они были */
-            background-color: var(--secondary-bg-color, #2c2c2c); /* Пример цвета фона */
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            margin-bottom: 10px; 
+            padding: 15px; 
+            /* Если требуется фон/рамка, добавьте здесь */
+            background-color: var(--secondary-bg-color, #2c2c2c);
             border-radius: 10px;
         }
         .contact-card:active {
@@ -52,15 +50,41 @@
             text-align: center; 
         }
         .contact-info {
-            width: 100%; /* Занимает всю ширину карточки */
+            width: 100%;
             display: flex;
-            justify-content: center; /* Центрируем имя */
+            justify-content: center;
+        }
+        
+        /* Стили для прелоадера */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color, #1a1a1a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        #preloader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .spinner {
+            /* Placeholder for your spinner */
         }
     </style>
 </head>
 
 <body>
     
+    <div id="preloader">
+        <div class="spinner"></div> 
+    </div>
     
     <div class="container" style="padding-top: 20px;">
         <header class="header">
@@ -74,49 +98,65 @@
                 Написать нам (Telegram)
             </a>
 
-            <a href="tel:+79232220001" class="contact-card">
+            <div class="contact-card" onclick="promptCall('+79232220001')">
                 <div class="contact-info">
                     <h3 class="contact-name">Вадим</h3>
                 </div>
-            </a>
-            
-            <a href="tel:+79137871232" class="contact-card">
+            </div>
+
+            <div class="contact-card" onclick="promptCall('+79137871232')">
                 <div class="contact-info">
                     <h3 class="contact-name">Алексей</h3>
                 </div>
-            </a>
+            </div>
             
-            <a href="tel:+79139176644" class="contact-card">
+            <div class="contact-card" onclick="promptCall('+79139176644')">
                 <div class="contact-info">
                     <h3 class="contact-name">Николай</h3>
                 </div>
-            </a>
             </div>
+
+        </div>
     </div>
 
     <script>
-    // --- ФУНКЦИЯ promptCall УДАЛЕНА. Звонок инициируется через нативные <a href="tel:..."> ---
-    
-    Telegram.WebApp.ready();
-    
-    // --- КОД ПРЕДЗАГРУЗЧИКА (ОСТАВЛЕН БЕЗ ИЗМЕНЕНИЙ) ---
+    // --- ПЕРЕМЕННЫЕ ДЛЯ ПРЕЛОВДЕРА ---
     const startTime = Date.now();
     const MINIMUM_DISPLAY_TIME = 2000;
 
-    window.addEventListener("load", () => {
+    // --- ФУНКЦИЯ ЗВОНКА (МЕТОД TWA) ---
+    function promptCall(number) {
+        // Используем openLink, чтобы явно сообщить Telegram, что нужно открыть системную ссылку
+        if (window.Telegram && Telegram.WebApp) {
+             Telegram.WebApp.openLink('tel:' + number);
+        } else {
+             // Запасной вариант для обычного браузера
+            window.location.href = 'tel:' + number;
+        }
+    }
+    
+    // --- ФУНКЦИЯ ДЛЯ КОРРЕКТНОГО УДАЛЕНИЯ ПРЕЛОВДЕРА ---
+    function hidePreloader() {
         const preloader = document.getElementById("preloader");
         if (!preloader) return;
+        
         const elapsedTime = Date.now() - startTime;
         const remainingTime = Math.max(0, MINIMUM_DISPLAY_TIME - elapsedTime);
 
         setTimeout(() => {
             preloader.classList.add("hidden");
+            
             setTimeout(() => {
                 preloader.remove();
             }, 500);
         }, remainingTime);
-    });
-    // --------------------------
+    }
+    
+    // --- ИНИЦИАЛИЗАЦИЯ ---
+    Telegram.WebApp.ready();
+    
+    // Скрываем прелоадер после полной загрузки страницы
+    window.addEventListener("load", hidePreloader);
 
     // Настройка навигации
     Telegram.BackButton.show();
